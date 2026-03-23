@@ -7,7 +7,14 @@ namespace BoltPhys {
         Vec2 min;
         Vec2 max;
 
-        bool Intersects(const AABB& other) const;
-        Vec2 GetSize() const;
+        constexpr bool Intersects(const AABB& other) const noexcept
+        {
+            return !(max.x < other.min.x || min.x > other.max.x || max.y < other.min.y || min.y > other.max.y);
+        }
+
+        constexpr Vec2 GetSize() const noexcept
+        {
+            return max - min;
+        }
     };
 }

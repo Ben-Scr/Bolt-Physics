@@ -2,9 +2,10 @@
 #include "Export.hpp"
 #include "BodyType.hpp"
 #include "Vec2.hpp"
-#include "Collider.hpp"
 
 namespace BoltPhys {
+    class Collider;
+
     class BOLT_PHYS_API Body
     {
     public:
@@ -19,7 +20,7 @@ namespace BoltPhys {
         void SetVelocity(const Vec2& v) noexcept;
 
         float GetMass() const noexcept;
-        void SetMass(float mass);
+        void SetMass(float mass) noexcept;
 
         bool IsBoundaryCheckEnabled() const noexcept;
         void SetBoundaryCheckEnabled(bool enabled) noexcept;
@@ -32,7 +33,7 @@ namespace BoltPhys {
         void AttachCollider(Collider* collider) noexcept;
 
     protected:
-        explicit Body(BodyType type);
+        explicit Body(BodyType type) noexcept;
 
     private:
         BodyType m_type;

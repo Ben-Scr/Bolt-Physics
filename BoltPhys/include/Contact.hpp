@@ -1,13 +1,14 @@
 #pragma once
 #include "Vec2.hpp"
-#include "Body.hpp"
 
 namespace BoltPhys {
+    class Body;
+
     struct Contact
     {
-        Body* BodyA = nullptr;
-        Body* BodyB = nullptr;
-        Vec2 Normal{};
-        float Penetration = 0.0f;
+        Body* bodyA = nullptr;
+        Body* bodyB = nullptr;
+        Vec2 normal{};
+        float penetration = 0.0f;
     };
 }

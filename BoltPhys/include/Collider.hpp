@@ -1,10 +1,11 @@
 #pragma once
 #include "Export.hpp"
-#include "Body.hpp"
-#include  "ColliderType.hpp"
+#include "ColliderType.hpp"
 #include "AABB.hpp"
 
 namespace BoltPhys {
+    class Body;
+
     class BOLT_PHYS_API Collider
     {
     public:
@@ -19,7 +20,7 @@ namespace BoltPhys {
         virtual AABB ComputeAABB() const = 0;
 
     protected:
-        explicit Collider(ColliderType type);
+        explicit Collider(ColliderType type) noexcept;
 
     private:
         ColliderType m_type;

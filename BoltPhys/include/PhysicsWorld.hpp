@@ -2,6 +2,8 @@
 #include "Export.hpp"
 #include "WorldSettings.hpp"
 #include "Body.hpp"
+#include "Collider.hpp"
+#include "Contact.hpp"
 
 #include <cstddef>
 #include <vector>
@@ -29,10 +31,17 @@ namespace BoltPhys {
 
         std::size_t GetBodyCount() const noexcept;
         std::size_t GetColliderCount() const noexcept;
+        const std::vector<Contact>& GetContacts() const noexcept;
 
     private:
+        void IntegrateBodies(float dt);
+        void ApplyWorldBounds(Body& body) const noexcept;
+        void DetectCollisions();
+        Contact BuildContact(Body& bodyA, Body& bodyB) const;
+
         WorldSettings m_settings;
         std::vector<Body*> m_bodies;
         std::vector<Collider*> m_colliders;
+        std::vector<Contact> m_contacts;
     };
 }
