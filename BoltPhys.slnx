@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="BoltPhys/BoltPhys.vcxproj" />
+  <Project Path="BoltPhys/BoltPhys.vcxproj" Id="968b1b8d-ea65-4c35-864f-7aa1262f867f" />
 </Solution>
