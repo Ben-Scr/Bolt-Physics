@@ -3,25 +3,25 @@
 #include "Body.hpp"
 
 namespace BoltPhys {
-    BoxCollider::BoxCollider(const Vec2& halfExtents)
+    BoxCollider::BoxCollider(const Vec2& scale)
         : Collider(ColliderType::Box),
-        m_halfExtents(halfExtents)
+        m_HalfExtends(scale)
     {
     }
 
-    const Vec2& BoxCollider::GetHalfExtents() const noexcept
+    const Vec2& BoxCollider::GetScale() const noexcept
     {
-        return m_halfExtents;
+        return m_HalfExtends;
     }
 
-    void BoxCollider::SetHalfExtents(const Vec2& halfExtents) noexcept
+    void BoxCollider::SetScale(const Vec2& scale) noexcept
     {
-        m_halfExtents = halfExtents;
+        m_HalfExtends = scale;
     }
 
     AABB BoxCollider::ComputeAABB() const
     {
         const Vec2 center = GetBody() ? GetBody()->GetPosition() : Vec2{};
-        return { center - m_halfExtents, center + m_halfExtents };
+        return { center - m_HalfExtends, center + m_HalfExtends };
     }
 }

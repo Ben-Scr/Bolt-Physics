@@ -102,10 +102,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\BoltPhys\include</IncludePath>
+    <IncludePath>$(SolutionDir)\external\include;$(SolutionDir)\BoltPhys\include</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)\BoltPhys\include</IncludePath>
+    <IncludePath>$(SolutionDir)\external\include;$(SolutionDir)\BoltPhys\include</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)\BoltPhys\include</IncludePath>
