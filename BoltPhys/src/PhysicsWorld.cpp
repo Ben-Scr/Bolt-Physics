@@ -157,7 +157,7 @@ namespace BoltPhys {
                 body->SetVelocity(body->GetVelocity() + (m_settings.gravity * dt));
             }
 
-            body->SetPosition(body->GetPosition() + (body->GetVelocity() * dt));
+            body->SetPosition(body->GetPosition() - (body->GetVelocity() * dt));
 
             if (m_settings.enableWorldBounds && body->IsBoundaryCheckEnabled()) {
                 ApplyWorldBounds(*body);
