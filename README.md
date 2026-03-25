@@ -1,11 +1,21 @@
 # BoltPhys
 
-BoltPhys is a minimalist, DLL-friendly 2D physics engine for C++ with a clear separation between bodies, colliders, and a registration-based `PhysicsWorld`.
+BoltPhys is a minimalist 2D physics module for C++ with a clear separation between bodies, colliders, and a registration-based `PhysicsWorld`.
+
+## Build target
+BoltPhys is configured as a **static library** in all Visual Studio configurations (`Debug/Release` and `Win32/x64`).
+
+- Project output type: `StaticLibrary`
+- Preprocessor define: `BT_STATIC`
+- API macro behavior: `BOLT_PHYS_API` becomes empty for static builds
+
+If you embed BoltPhys directly into BoltEngine, this setup avoids DLL deployment and keeps integration simple.
 
 ## Architecture
 - **Bodies**: `StaticBody`, `DynamicBody`, and `KinematicBody` derive from `Body`.
 - **Colliders**: `BoxCollider`, `CircleCollider`, and `PolygonCollider` derive from `Collider`.
 - **World**: `PhysicsWorld` stores global settings, registration logic, the simulation step, and the contact list.
+- **Utility Queries**: `Physics2D` provides overlap and point queries with and without a world context.
 - **Contacts**: Collisions are reported as simple `Contact` entries for overlapping AABBs.
 
 ## Behavior
@@ -18,47 +28,7 @@ BoltPhys is a minimalist, DLL-friendly 2D physics engine for C++ with a clear se
 
 ## Example
 ```cpp
-BoltPhys::PhysicsWorld world;
-
-BoltPhys::DynamicBody player;
-BoltPhys::BoxCollider playerCollider({0.5f, 1.0f});
-
-world.RegisterBody(player);
-world.RegisterCollider(playerCollider);
-world.AttachCollider(player, playerCollider);
-
-world.Step(1.0f / 60.0f);
-```
-
-## How to integrate BoltPhys into your project
-1. Add the BoltPhys source files and headers to your C++ project, or build the library as a DLL/static library and link it to your game or application.
-2. Make sure your compiler can find the BoltPhys headers by adding the appropriate include directory to your build configuration.
-3. Include the main BoltPhys headers wherever you want to create physics objects.
-4. Create a `PhysicsWorld` instance during your initialization phase and configure its global settings if needed.
-5. Create bodies and colliders, register them with the world, and attach colliders to the corresponding bodies.
-6. Call `world.Step(deltaTime)` once per frame or tick to advance the simulation.
-7. Read positions and contacts from the registered objects after each step to drive gameplay or rendering.
-
-## Basic integration flow
-```cpp
-#include <BoltPhys/PhysicsWorld.hpp>
-#include <BoltPhys/Bodies/DynamicBody.hpp>
-#include <BoltPhys/Colliders/BoxCollider.hpp>
-
-int main()
-{
-    BoltPhys::PhysicsWorld world;
-
-    BoltPhys::DynamicBody player;
-    BoltPhys::BoxCollider playerCollider({0.5f, 1.0f});
-
-    world.RegisterBody(player);
-    world.RegisterCollider(playerCollider);
-    world.AttachCollider(player, playerCollider);
-
-    const float deltaTime = 1.0f / 60.0f;
-    world.Step(deltaTime);
-
-    return 0;
-}
-```
+#include "PhysicsWorld.hpp"
+#include "DynamicBody.hpp"
+#include "BoxCollider.hpp"
+#include "Physics2D.hpp"
