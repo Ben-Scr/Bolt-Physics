@@ -2,11 +2,11 @@
 #include "Body2D.hpp"
 
 namespace BoltPhys {
-    Collider2D::Collider2D(ColliderType type) noexcept
+    Collider::Collider(ColliderType type) noexcept
         : m_type(type)
     {}
 
-    void Collider2D::Destroy() noexcept
+    void Collider::Destroy() noexcept
     {
         if (m_body != nullptr) {
             m_body->AttachCollider(nullptr);
@@ -14,22 +14,22 @@ namespace BoltPhys {
         }
     }
 
-    ColliderType Collider2D::GetType() const noexcept
+    ColliderType Collider::GetType() const noexcept
     {
         return m_type;
     }
 
-    Body2D* Collider2D::GetBody() noexcept
+    Body* Collider::GetBody() noexcept
     {
         return m_body;
     }
 
-    const Body2D* Collider2D::GetBody() const noexcept
+    const Body* Collider::GetBody() const noexcept
     {
         return m_body;
     }
 
-    void Collider2D::SetBody(Body2D* body) noexcept
+    void Collider::SetBody(Body* body) noexcept
     {
         m_body = body;
     }

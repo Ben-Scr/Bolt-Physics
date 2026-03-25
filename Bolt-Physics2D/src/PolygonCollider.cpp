@@ -11,11 +11,11 @@ namespace BoltPhys {
         constexpr std::size_t kMinPolygonVertices = 3;
     }
 
-    PolygonCollider2D::PolygonCollider2D()
-        : Collider2D(ColliderType::Polygon)
+    PolygonCollider::PolygonCollider()
+        : Collider(ColliderType::Polygon)
     {}
 
-    void PolygonCollider2D::SetVertices(const Vec2* vertices, std::size_t count)
+    void PolygonCollider::SetVertices(const Vec2* vertices, std::size_t count)
     {
         m_vertices.clear();
         if (vertices == nullptr || count < kMinPolygonVertices) {
@@ -25,7 +25,7 @@ namespace BoltPhys {
         m_vertices.assign(vertices, vertices + count);
     }
 
-    void PolygonCollider2D::SetVertices(std::vector<Vec2> vertices)
+    void PolygonCollider::SetVertices(std::vector<Vec2> vertices)
     {
         if (vertices.size() < kMinPolygonVertices) {
             m_vertices.clear();
@@ -35,17 +35,17 @@ namespace BoltPhys {
         m_vertices = std::move(vertices);
     }
 
-    std::size_t PolygonCollider2D::GetVertexCount() const noexcept
+    std::size_t PolygonCollider::GetVertexCount() const noexcept
     {
         return m_vertices.size();
     }
 
-    const Vec2* PolygonCollider2D::GetVertices() const noexcept
+    const Vec2* PolygonCollider::GetVertices() const noexcept
     {
         return m_vertices.empty() ? nullptr : m_vertices.data();
     }
 
-    AABB PolygonCollider2D::ComputeAABB() const noexcept
+    AABB PolygonCollider::ComputeAABB() const noexcept
     {
         const Vec2 bodyPosition = GetBody() ? GetBody()->GetPosition() : Vec2{};
         if (m_vertices.empty()) {

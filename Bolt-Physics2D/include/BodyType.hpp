@@ -1,7 +1,7 @@
 #pragma once
 
 namespace BoltPhys {
-    enum class BodyType2D
+    enum class BodyType
     {
         Static,
         Dynamic,

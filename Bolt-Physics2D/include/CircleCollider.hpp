@@ -1,9 +1,9 @@
 #pragma once
 #include "Export.hpp"
-#include "Collider2D.hpp"
+#include "Collider.hpp"
 
 namespace BoltPhys {
-    class BOLT_PHYS_API CircleCollider final : public Collider2D
+    class BOLT_PHYS_API CircleCollider final : public Collider
     {
     public:
         explicit CircleCollider(float radius);

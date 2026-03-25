@@ -1,4 +1,4 @@
-#include "PhysicsWorld2D.hpp"
+#include "PhysicsWorld.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -61,7 +61,7 @@ namespace BoltPhys {
             return (lower << 32) | upper;
         }
 
-        float ComputeInverseMass(const Body2D& body) noexcept
+        float ComputeInverseMass(const Body& body) noexcept
         {
             const float mass = body.GetMass();
             if (mass <= std::numeric_limits<float>::epsilon()) {
@@ -71,9 +71,9 @@ namespace BoltPhys {
             return 1.0f / mass;
         }
 
-        void DetachBodyAndCollider(Body2D& body) noexcept
+        void DetachBodyAndCollider(Body& body) noexcept
         {
-            Collider2D* collider = body.GetCollider();
+            Collider* collider = body.GetCollider();
             if (collider == nullptr) {
                 return;
             }
@@ -84,18 +84,18 @@ namespace BoltPhys {
 
         struct BodyCollisionData
         {
-            Body2D* body = nullptr;
+            Body* body = nullptr;
             AABB aabb{};
         };
     }
 
-    PhysicsWorld2D::PhysicsWorld2D() = default;
+    PhysicsWorld::PhysicsWorld() = default;
 
-    PhysicsWorld2D::PhysicsWorld2D(const WorldSettings& settings)
+    PhysicsWorld::PhysicsWorld(const WorldSettings& settings)
         : m_settings(SanitizeSettings(settings))
     {}
 
-    WorldSettings PhysicsWorld2D::SanitizeSettings(const WorldSettings& settings) noexcept
+    WorldSettings PhysicsWorld::SanitizeSettings(const WorldSettings& settings) noexcept
     {
         WorldSettings sanitized = settings;
 
@@ -112,22 +112,22 @@ namespace BoltPhys {
         return sanitized;
     }
 
-    void PhysicsWorld2D::SetSettings(const WorldSettings& settings) noexcept
+    void PhysicsWorld::SetSettings(const WorldSettings& settings) noexcept
     {
         m_settings = SanitizeSettings(settings);
     }
 
-    const WorldSettings& PhysicsWorld2D::GetSettings() const noexcept
+    const WorldSettings& PhysicsWorld::GetSettings() const noexcept
     {
         return m_settings;
     }
 
-    const std::vector<Collider2D*>& PhysicsWorld2D::GetColliders() const noexcept
+    const std::vector<Collider*>& PhysicsWorld::GetColliders() const noexcept
     {
         return m_colliders;
     }
 
-    bool PhysicsWorld2D::RegisterBody(Body2D& body)
+    bool PhysicsWorld::RegisterBody(Body& body)
     {
         if (Contains(m_bodies, body)) {
             return false;
@@ -137,7 +137,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld2D::UnregisterBody(Body2D& body)
+    bool PhysicsWorld::UnregisterBody(Body& body)
     {
         const auto it = std::find(m_bodies.begin(), m_bodies.end(), &body);
         if (it == m_bodies.end()) {
@@ -156,7 +156,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld2D::RegisterCollider(Collider2D& collider)
+    bool PhysicsWorld::RegisterCollider(Collider& collider)
     {
         if (Contains(m_colliders, collider)) {
             return false;
@@ -166,14 +166,14 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld2D::UnregisterCollider(Collider2D& collider)
+    bool PhysicsWorld::UnregisterCollider(Collider& collider)
     {
         const auto it = std::find(m_colliders.begin(), m_colliders.end(), &collider);
         if (it == m_colliders.end()) {
             return false;
         }
 
-        if (Body2D* body = collider.GetBody()) {
+        if (Body* body = collider.GetBody()) {
             body->AttachCollider(nullptr);
             collider.SetBody(nullptr);
         }
@@ -190,7 +190,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld2D::AttachCollider(Body2D& body, Collider2D& collider)
+    bool PhysicsWorld::AttachCollider(Body& body, Collider& collider)
     {
         if (!Contains(m_bodies, body) || !Contains(m_colliders, collider)) {
             return false;
@@ -209,12 +209,12 @@ namespace BoltPhys {
         return true;
     }
 
-    void PhysicsWorld2D::DetachCollider(Body2D& body)
+    void PhysicsWorld::DetachCollider(Body& body)
     {
         DetachBodyAndCollider(body);
     }
 
-    void PhysicsWorld2D::Step(float dt)
+    void PhysicsWorld::Step(float dt)
     {
         if (dt <= 0.0f) {
             return;
@@ -225,29 +225,29 @@ namespace BoltPhys {
         ResolveContacts();
     }
 
-    std::size_t PhysicsWorld2D::GetBodyCount() const noexcept
+    std::size_t PhysicsWorld::GetBodyCount() const noexcept
     {
         return m_bodies.size();
     }
 
-    std::size_t PhysicsWorld2D::GetColliderCount() const noexcept
+    std::size_t PhysicsWorld::GetColliderCount() const noexcept
     {
         return m_colliders.size();
     }
 
-    const std::vector<Contact>& PhysicsWorld2D::GetContacts() const noexcept
+    const std::vector<Contact>& PhysicsWorld::GetContacts() const noexcept
     {
         return m_contacts;
     }
 
-    void PhysicsWorld2D::IntegrateBodies(float dt)
+    void PhysicsWorld::IntegrateBodies(float dt)
     {
-        for (Body2D* body : m_bodies) {
-            if (body == nullptr || body->GetBodyType() == BodyType2D::Static) {
+        for (Body* body : m_bodies) {
+            if (body == nullptr || body->GetBodyType() == BodyType::Static) {
                 continue;
             }
 
-            if (body->GetBodyType() == BodyType2D::Dynamic && body->IsGravityEnabled()) {
+            if (body->GetBodyType() == BodyType::Dynamic && body->IsGravityEnabled()) {
                 body->SetVelocity(body->GetVelocity() + (m_settings.gravity * dt));
             }
 
@@ -259,7 +259,7 @@ namespace BoltPhys {
         }
     }
 
-    void PhysicsWorld2D::ApplyWorldBounds(Body2D& body) const noexcept
+    void PhysicsWorld::ApplyWorldBounds(Body& body) const noexcept
     {
         Vec2 position = Clamp(body.GetPosition(), m_settings.worldMin, m_settings.worldMax);
         Vec2 velocity = body.GetVelocity();
@@ -275,7 +275,7 @@ namespace BoltPhys {
         body.SetVelocity(velocity);
     }
 
-    void PhysicsWorld2D::DetectCollisions()
+    void PhysicsWorld::DetectCollisions()
     {
         m_contacts.clear();
 
@@ -284,12 +284,12 @@ namespace BoltPhys {
         std::vector<BodyCollisionData> collisionBodies;
         collisionBodies.reserve(m_bodies.size());
 
-        for (Body2D* body : m_bodies) {
+        for (Body* body : m_bodies) {
             if (body == nullptr) {
                 continue;
             }
 
-            Collider2D* collider = body->GetCollider();
+            Collider* collider = body->GetCollider();
             if (collider == nullptr) {
                 continue;
             }
@@ -325,14 +325,14 @@ namespace BoltPhys {
 
             for (std::size_t i = 0; i < cellBodyIndices.size(); ++i) {
                 const std::size_t collisionIndexA = cellBodyIndices[i];
-                Body2D* bodyA = collisionBodies[collisionIndexA].body;
+                Body* bodyA = collisionBodies[collisionIndexA].body;
                 if (bodyA == nullptr) {
                     continue;
                 }
 
                 for (std::size_t j = i + 1; j < cellBodyIndices.size(); ++j) {
                     const std::size_t collisionIndexB = cellBodyIndices[j];
-                    Body2D* bodyB = collisionBodies[collisionIndexB].body;
+                    Body* bodyB = collisionBodies[collisionIndexB].body;
                     if (bodyB == nullptr || bodyA == bodyB) {
                         continue;
                     }
@@ -352,17 +352,17 @@ namespace BoltPhys {
         }
     }
 
-    void PhysicsWorld2D::ResolveContacts()
+    void PhysicsWorld::ResolveContacts()
     {
         for (const Contact& contact : m_contacts) {
-            Body2D* bodyA = contact.bodyA;
-            Body2D* bodyB = contact.bodyB;
+            Body* bodyA = contact.bodyA;
+            Body* bodyB = contact.bodyB;
             if (bodyA == nullptr || bodyB == nullptr || contact.penetration <= 0.0f) {
                 continue;
             }
 
-            const bool moveA = bodyA->GetBodyType() == BodyType2D::Dynamic;
-            const bool moveB = bodyB->GetBodyType() == BodyType2D::Dynamic;
+            const bool moveA = bodyA->GetBodyType() == BodyType::Dynamic;
+            const bool moveB = bodyB->GetBodyType() == BodyType::Dynamic;
 
             if (!moveA && !moveB) {
                 continue;
@@ -404,10 +404,10 @@ namespace BoltPhys {
         }
     }
 
-    Contact PhysicsWorld2D::BuildContact(Body2D& bodyA, Body2D& bodyB) const
+    Contact PhysicsWorld::BuildContact(Body& bodyA, Body& bodyB) const
     {
-        Collider2D* colliderA = bodyA.GetCollider();
-        Collider2D* colliderB = bodyB.GetCollider();
+        Collider* colliderA = bodyA.GetCollider();
+        Collider* colliderB = bodyB.GetCollider();
 
         Contact contact{};
         contact.bodyA = &bodyA;

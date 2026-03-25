@@ -1,17 +1,17 @@
 #include "Physics2D.hpp"
 
-#include "Body2D.hpp"
-#include "BoxCollider2D.hpp"
+#include "Body.hpp"
+#include "BoxCollider.hpp"
 #include "CircleCollider.hpp"
-#include "Collider2D.hpp"
-#include "PhysicsWorld2D.hpp"
-#include "PolygonCollider2D.hpp"
+#include "Collider.hpp"
+#include "PhysicsWorld.hpp"
+#include "PolygonCollider.hpp"
 
 #include <algorithm>
 #include <cmath>
 
 namespace BoltPhys {
-    PhysicsWorld2D* Physics2D::s_context = nullptr;
+    PhysicsWorld* Physics2D::s_context = nullptr;
 
     namespace {
         bool ContainsPointInAABB(const AABB& aabb, const Vec2& point) noexcept
@@ -20,9 +20,9 @@ namespace BoltPhys {
                 point.y >= aabb.min.y && point.y <= aabb.max.y;
         }
 
-        Vec2 GetColliderWorldPosition(Collider2D& collider) noexcept
+        Vec2 GetColliderWorldPosition(Collider& collider) noexcept
         {
-            const Body2D* body = collider.GetBody();
+            const Body* body = collider.GetBody();
             return body != nullptr ? body->GetPosition() : Vec2{};
         }
 
@@ -34,7 +34,7 @@ namespace BoltPhys {
             return Dot(delta, delta) <= radius * radius;
         }
 
-        bool ContainsPointBox(BoxCollider2D& box, const Vec2& point) noexcept
+        bool ContainsPointBox(BoxCollider& box, const Vec2& point) noexcept
         {
             const Vec2 center = GetColliderWorldPosition(box);
             const Vec2 half = box.GetHalfExtents();
@@ -42,7 +42,7 @@ namespace BoltPhys {
             return ContainsPointInAABB(aabb, point);
         }
 
-        bool ContainsPointPolygon(PolygonCollider2D& polygon, const Vec2& point) noexcept
+        bool ContainsPointPolygon(PolygonCollider& polygon, const Vec2& point) noexcept
         {
             const std::size_t vertexCount = polygon.GetVertexCount();
             const Vec2* vertices = polygon.GetVertices();
@@ -76,21 +76,21 @@ namespace BoltPhys {
             return inside;
         }
 
-        bool ColliderContainsPoint(Collider2D& collider, const Vec2& point) noexcept
+        bool ColliderContainsPoint(Collider& collider, const Vec2& point) noexcept
         {
             switch (collider.GetType()) {
             case ColliderType::Circle:
                 return ContainsPointCircle(static_cast<CircleCollider&>(collider), point);
             case ColliderType::Box:
-                return ContainsPointBox(static_cast<BoxCollider2D&>(collider), point);
+                return ContainsPointBox(static_cast<BoxCollider&>(collider), point);
             case ColliderType::Polygon:
-                return ContainsPointPolygon(static_cast<PolygonCollider2D&>(collider), point);
+                return ContainsPointPolygon(static_cast<PolygonCollider&>(collider), point);
             default:
                 return ContainsPointInAABB(collider.ComputeAABB(), point);
             }
         }
 
-        Contact BuildAabbContact(Collider2D& colliderA, Collider2D& colliderB) noexcept
+        Contact BuildAabbContact(Collider& colliderA, Collider& colliderB) noexcept
         {
             const AABB aabbA = colliderA.ComputeAABB();
             const AABB aabbB = colliderB.ComputeAABB();
@@ -118,7 +118,7 @@ namespace BoltPhys {
         }
     }
 
-    void Physics2D::SetContext(PhysicsWorld2D& world) noexcept
+    void Physics2D::SetContext(PhysicsWorld& world) noexcept
     {
         s_context = &world;
     }
@@ -128,13 +128,13 @@ namespace BoltPhys {
         s_context = nullptr;
     }
 
-    Contact* Physics2D::OverlapsWith(Collider2D& collider)
+    Contact* Physics2D::OverlapsWith(Collider& collider)
     {
         if (s_context == nullptr) {
             return nullptr;
         }
 
-        for (Collider2D* other : s_context->GetColliders()) {
+        for (Collider* other : s_context->GetColliders()) {
             if (other == nullptr || other == &collider) {
                 continue;
             }
@@ -148,7 +148,7 @@ namespace BoltPhys {
         return nullptr;
     }
 
-    Contact* Physics2D::OverlapsWith(Collider2D& colliderA, Collider2D& colliderB)
+    Contact* Physics2D::OverlapsWith(Collider& colliderA, Collider& colliderB)
     {
         const AABB aabbA = colliderA.ComputeAABB();
         const AABB aabbB = colliderB.ComputeAABB();
@@ -161,13 +161,13 @@ namespace BoltPhys {
         return &s_contact;
     }
 
-    const Collider2D* Physics2D::ContainsPoint(const Vec2& point)
+    const Collider* Physics2D::ContainsPoint(const Vec2& point)
     {
         if (s_context == nullptr) {
             return nullptr;
         }
 
-        for (Collider2D* collider : s_context->GetColliders()) {
+        for (Collider* collider : s_context->GetColliders()) {
             if (collider == nullptr) {
                 continue;
             }
@@ -180,7 +180,7 @@ namespace BoltPhys {
         return nullptr;
     }
 
-    bool Physics2D::ContainsPoint(Collider2D& collider, const Vec2& point)
+    bool Physics2D::ContainsPoint(Collider& collider, const Vec2& point)
     {
         return ColliderContainsPoint(collider, point);
     }

@@ -7,7 +7,7 @@ namespace BoltPhys {
     }
 
     CircleCollider::CircleCollider(float radius)
-        : Collider2D(ColliderType::Circle),
+        : Collider(ColliderType::Circle),
         m_radius(radius > 0.0f ? radius : kDefaultRadius)
     {}
 

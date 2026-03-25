@@ -1,8 +1,8 @@
-#include "PhysicsWorld2D.hpp"
+#include "PhysicsWorld.hpp"
 
 int main()
 {
-    BoltPhys::PhysicsWorld2D world;
+    BoltPhys::PhysicsWorld world;
     (void)world;
     return 0;
 }

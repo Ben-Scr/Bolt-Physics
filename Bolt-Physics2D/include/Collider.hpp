@@ -4,29 +4,29 @@
 #include "AABB.hpp"
 
 namespace BoltPhys {
-    class Body2D;
+    class Body;
 
-    class BOLT_PHYS_API Collider2D
+    class BOLT_PHYS_API Collider
     {
     public:
-        virtual ~Collider2D() = default;
+        virtual ~Collider() = default;
 
         virtual void Destroy() noexcept;
 
         ColliderType GetType() const noexcept;
 
-        Body2D* GetBody() noexcept;
-        const Body2D* GetBody() const noexcept;
+        Body* GetBody() noexcept;
+        const Body* GetBody() const noexcept;
 
-        void SetBody(Body2D* body) noexcept;
+        void SetBody(Body* body) noexcept;
 
         virtual AABB ComputeAABB() const noexcept = 0;
 
     protected:
-        explicit Collider2D(ColliderType type) noexcept;
+        explicit Collider(ColliderType type) noexcept;
 
     private:
         ColliderType m_type;
-        Body2D* m_body = nullptr;
+        Body* m_body = nullptr;
     };
 }

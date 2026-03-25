@@ -20,30 +20,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.hpp" />
-    <ClInclude Include="include\Body2D.hpp" />
-    <ClInclude Include="include\BodyType2D.hpp" />
+    <ClInclude Include="include\Body.hpp" />
+    <ClInclude Include="include\BodyType.hpp" />
     <ClInclude Include="include\Core.hpp" />
-    <ClInclude Include="include\BoxCollider2D.hpp" />
+    <ClInclude Include="include\BoxCollider.hpp" />
     <ClInclude Include="include\CircleCollider.hpp" />
-    <ClInclude Include="include\Collider2D.hpp" />
+    <ClInclude Include="include\Collider.hpp" />
     <ClInclude Include="include\ColliderType.hpp" />
     <ClInclude Include="include\Contact.hpp" />
     <ClInclude Include="include\Export.hpp" />
     <ClInclude Include="include\Physics2D.hpp" />
-    <ClInclude Include="include\PhysicsWorld2D.hpp" />
-    <ClInclude Include="include\PolygonCollider2D.hpp" />
+    <ClInclude Include="include\PhysicsWorld.hpp" />
+    <ClInclude Include="include\PolygonCollider.hpp" />
     <ClInclude Include="include\Vec2.hpp" />
     <ClInclude Include="include\WorldSettings.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Body2D.cpp" />
-    <ClCompile Include="src\BoxCollider2D.cpp" />
+    <ClCompile Include="src\Body.cpp" />
+    <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\CircleCollider.cpp" />
-    <ClCompile Include="src\Collider2D.cpp" />
+    <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\Physics2D.cpp" />
-    <ClCompile Include="src\PhysicsWorld2D.cpp" />
-    <ClCompile Include="src\PolygonCollider2D.cpp" />
+    <ClCompile Include="src\PhysicsWorld.cpp" />
+    <ClCompile Include="src\PolygonCollider.cpp" />
     <ClCompile Include="src\Vec2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
