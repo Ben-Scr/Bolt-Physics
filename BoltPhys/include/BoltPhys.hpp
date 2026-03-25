@@ -3,7 +3,7 @@
 #include "BodyType.hpp"
 
 #include "Collider.hpp"
-#include "BoxCollider.hpp"
+#include "BoxCollider2D.hpp"
 #include "CircleCollider.hpp"
 #include "PolygonCollider.hpp"
 #include "ColliderType.hpp"

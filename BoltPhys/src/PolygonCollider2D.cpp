@@ -1,13 +1,13 @@
-#include "PolygonCollider.hpp"
+#include "PolygonCollider2D.hpp"
 
-#include "Body.hpp"
+#include "Body2D.hpp"
 
 #include <algorithm>
 #include <limits>
 
 namespace BoltPhys {
     PolygonCollider::PolygonCollider()
-        : Collider(ColliderType::Polygon)
+        : Collider2D(ColliderType::Polygon)
     {
     }
 

@@ -1,10 +1,10 @@
 #include "CircleCollider.hpp"
 
-#include "Body.hpp"
+#include "Body2D.hpp"
 
 namespace BoltPhys {
     CircleCollider::CircleCollider(float radius)
-        : Collider(ColliderType::Circle),
+        : Collider2D(ColliderType::Circle),
         m_radius(radius > 0.0f ? radius : 0.5f)
     {
     }

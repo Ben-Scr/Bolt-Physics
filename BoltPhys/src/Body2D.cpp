@@ -1,18 +1,18 @@
-#include "Body.hpp"
-#include "Collider.hpp"
+#include "Body2D.hpp"
+#include "Collider2D.hpp"
 
 namespace BoltPhys {
-    Body::Body() noexcept
+    Body2D::Body2D() noexcept
     {
         SetBodyType(BodyType::Dynamic);
     }
 
-    Body::Body(BodyType type) noexcept
+    Body2D::Body2D(BodyType type) noexcept
     {
         SetBodyType(type); 
     }
 
-    Body::~Body()
+    Body2D::~Body2D()
     {
         if (m_collider != nullptr) {
             m_collider->SetBody(nullptr);
@@ -20,12 +20,12 @@ namespace BoltPhys {
         }
     }
 
-    BodyType Body::GetBodyType() const noexcept
+    BodyType Body2D::GetBodyType() const noexcept
     {
         return m_bodyType;
     }
 
-    void Body::SetBodyType(BodyType type) noexcept
+    void Body2D::SetBodyType(BodyType type) noexcept
     {
         m_bodyType = type;
 
@@ -48,67 +48,67 @@ namespace BoltPhys {
         }
     }
 
-    const Vec2& Body::GetPosition() const noexcept
+    const Vec2& Body2D::GetPosition() const noexcept
     {
         return m_position;
     }
 
-    void Body::SetPosition(const Vec2& p) noexcept
+    void Body2D::SetPosition(const Vec2& p) noexcept
     {
         m_position = p;
     }
 
-    const Vec2& Body::GetVelocity() const noexcept
+    const Vec2& Body2D::GetVelocity() const noexcept
     {
         return m_velocity;
     }
 
-    void Body::SetVelocity(const Vec2& v) noexcept
+    void Body2D::SetVelocity(const Vec2& v) noexcept
     {
         m_velocity = v;
     }
 
-    float Body::GetMass() const noexcept
+    float Body2D::GetMass() const noexcept
     {
         return m_mass;
     }
 
-    void Body::SetMass(float mass) noexcept
+    void Body2D::SetMass(float mass) noexcept
     {
         m_mass = mass > 0.0f ? mass : 1.0f;
     }
 
-    bool Body::IsBoundaryCheckEnabled() const noexcept
+    bool Body2D::IsBoundaryCheckEnabled() const noexcept
     {
         return m_boundaryCheckEnabled;
     }
 
-    void Body::SetBoundaryCheckEnabled(bool enabled) noexcept
+    void Body2D::SetBoundaryCheckEnabled(bool enabled) noexcept
     {
         m_boundaryCheckEnabled = enabled;
     }
 
-    bool Body::IsGravityEnabled() const noexcept
+    bool Body2D::IsGravityEnabled() const noexcept
     {
         return m_gravityEnabled;
     }
 
-    void Body::SetGravityEnabled(bool enabled) noexcept
+    void Body2D::SetGravityEnabled(bool enabled) noexcept
     {
         m_gravityEnabled = enabled;
     }
 
-    Collider* Body::GetCollider() noexcept
+    Collider2D* Body2D::GetCollider() noexcept
     {
         return m_collider;
     }
 
-    const Collider* Body::GetCollider() const noexcept
+    const Collider2D* Body2D::GetCollider() const noexcept
     {
         return m_collider;
     }
 
-    void Body::AttachCollider(Collider* collider) noexcept
+    void Body2D::AttachCollider(Collider2D* collider) noexcept
     {
         m_collider = collider;
     }

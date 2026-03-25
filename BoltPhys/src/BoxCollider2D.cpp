@@ -1,10 +1,10 @@
-#include "BoxCollider.hpp"
+#include "BoxCollider2D.hpp"
 
-#include "Body.hpp"
+#include "Body2D.hpp"
 
 namespace BoltPhys {
     BoxCollider::BoxCollider(const Vec2& halfExtents)
-        : Collider(ColliderType::Box),
+        : Collider2D(ColliderType::Box),
         m_halfExtents(halfExtents)
     {
     }

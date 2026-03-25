@@ -1,8 +1,8 @@
 #include "PhysicsWorld.hpp"
 
-#include "BoxCollider.hpp"
+#include "BoxCollider2D.hpp"
 #include "CircleCollider.hpp"
-#include "PolygonCollider.hpp"
+#include "PolygonCollider2D.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -82,12 +82,12 @@ namespace BoltPhys {
         return m_settings;
     }
 
-    const std::vector<Collider*>& PhysicsWorld::GetColliders() const noexcept
+    const std::vector<Collider2D*>& PhysicsWorld::GetColliders() const noexcept
     {
         return m_colliders;
     }
 
-    bool PhysicsWorld::RegisterBody(Body& body)
+    bool PhysicsWorld::RegisterBody(Body2D& body)
     {
         if (Contains(m_bodies, body)) {
             return false;
@@ -97,7 +97,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::UnregisterBody(Body& body)
+    bool PhysicsWorld::UnregisterBody(Body2D& body)
     {
         const auto it = std::find(m_bodies.begin(), m_bodies.end(), &body);
         if (it == m_bodies.end()) {
@@ -109,7 +109,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::RegisterCollider(Collider& collider)
+    bool PhysicsWorld::RegisterCollider(Collider2D& collider)
     {
         if (Contains(m_colliders, collider)) {
             return false;
@@ -119,14 +119,14 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::UnregisterCollider(Collider& collider)
+    bool PhysicsWorld::UnregisterCollider(Collider2D& collider)
     {
         const auto it = std::find(m_colliders.begin(), m_colliders.end(), &collider);
         if (it == m_colliders.end()) {
             return false;
         }
 
-        if (Body* body = collider.GetBody()) {
+        if (Body2D* body = collider.GetBody()) {
             body->AttachCollider(nullptr);
             collider.SetBody(nullptr);
         }
@@ -135,7 +135,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::AttachCollider(Body& body, Collider& collider)
+    bool PhysicsWorld::AttachCollider(Body2D& body, Collider2D& collider)
     {
         if (!Contains(m_bodies, body) || !Contains(m_colliders, collider)) {
             return false;
@@ -154,9 +154,9 @@ namespace BoltPhys {
         return true;
     }
 
-    void PhysicsWorld::DetachCollider(Body& body)
+    void PhysicsWorld::DetachCollider(Body2D& body)
     {
-        if (Collider* collider = body.GetCollider()) {
+        if (Collider2D* collider = body.GetCollider()) {
             collider->SetBody(nullptr);
             body.AttachCollider(nullptr);
         }
@@ -190,7 +190,7 @@ namespace BoltPhys {
 
     void PhysicsWorld::IntegrateBodies(float dt)
     {
-        for (Body* body : m_bodies) {
+        for (Body2D* body : m_bodies) {
             if (body == nullptr || body->GetBodyType() == BodyType::Static) {
                 continue;
             }
@@ -207,7 +207,7 @@ namespace BoltPhys {
         }
     }
 
-    void PhysicsWorld::ApplyWorldBounds(Body& body) const noexcept
+    void PhysicsWorld::ApplyWorldBounds(Body2D& body) const noexcept
     {
         Vec2 position = Clamp(body.GetPosition(), m_settings.worldMin, m_settings.worldMax);
         Vec2 velocity = body.GetVelocity();
@@ -229,14 +229,14 @@ namespace BoltPhys {
 
         const float cellSize = std::max(m_settings.broadphaseCellSize, 0.001f);
 
-        std::unordered_map<CellCoord, std::vector<Body*>, CellCoordHasher> grid;
+        std::unordered_map<CellCoord, std::vector<Body2D*>, CellCoordHasher> grid;
         grid.reserve(m_bodies.size() * 2);
 
-        std::unordered_map<Body*, std::size_t> bodyIndices;
+        std::unordered_map<Body2D*, std::size_t> bodyIndices;
         bodyIndices.reserve(m_bodies.size());
 
         for (std::size_t i = 0; i < m_bodies.size(); ++i) {
-            Body* body = m_bodies[i];
+            Body2D* body = m_bodies[i];
             if (body == nullptr || body->GetCollider() == nullptr) {
                 continue;
             }
@@ -260,19 +260,19 @@ namespace BoltPhys {
         checkedPairs.reserve(m_bodies.size() * 2);
 
         for (const auto& entry : grid) {
-            const std::vector<Body*>& cellBodies = entry.second;
+            const std::vector<Body2D*>& cellBodies = entry.second;
             if (cellBodies.size() < 2) {
                 continue;
             }
 
             for (std::size_t i = 0; i < cellBodies.size(); ++i) {
-                Body* bodyA = cellBodies[i];
+                Body2D* bodyA = cellBodies[i];
                 if (bodyA == nullptr || bodyA->GetCollider() == nullptr) {
                     continue;
                 }
 
                 for (std::size_t j = i + 1; j < cellBodies.size(); ++j) {
-                    Body* bodyB = cellBodies[j];
+                    Body2D* bodyB = cellBodies[j];
                     if (bodyB == nullptr || bodyB->GetCollider() == nullptr || bodyA == bodyB) {
                         continue;
                     }
@@ -303,8 +303,8 @@ namespace BoltPhys {
     void PhysicsWorld::ResolveContacts()
     {
         for (const Contact& contact : m_contacts) {
-            Body* bodyA = contact.bodyA;
-            Body* bodyB = contact.bodyB;
+            Body2D* bodyA = contact.bodyA;
+            Body2D* bodyB = contact.bodyB;
             if (bodyA == nullptr || bodyB == nullptr || contact.penetration <= 0.0f) {
                 continue;
             }
@@ -352,7 +352,7 @@ namespace BoltPhys {
         }
     }
 
-    Contact PhysicsWorld::BuildContact(Body& bodyA, Body& bodyB) const
+    Contact PhysicsWorld::BuildContact(Body2D& bodyA, Body2D& bodyB) const
     {
         const AABB aabbA = bodyA.GetCollider()->ComputeAABB();
         const AABB aabbB = bodyB.GetCollider()->ComputeAABB();

@@ -1,12 +1,12 @@
 #pragma once
 #include "Export.hpp"
-#include "Collider.hpp"
+#include "Collider2D.hpp"
 
 #include <cstddef>
 #include <vector>
 
 namespace BoltPhys {
-    class BOLT_PHYS_API PolygonCollider final : public Collider
+    class BOLT_PHYS_API PolygonCollider final : public Collider2D
     {
     public:
         PolygonCollider();
