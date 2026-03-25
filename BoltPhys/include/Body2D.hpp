@@ -1,6 +1,6 @@
 #pragma once
 #include "Export.hpp"
-#include "BodyType.hpp"
+#include "BodyType2D.hpp"
 #include "Vec2.hpp"
 
 namespace BoltPhys {
@@ -10,12 +10,12 @@ namespace BoltPhys {
     {
     public:
         Body2D() noexcept;
-        explicit Body2D(BodyType type) noexcept;
+        explicit Body2D(BodyType2D type) noexcept;
         ~Body2D() = default;
         void Destroy() noexcept;
 
-        BodyType GetBodyType() const noexcept;
-        void SetBodyType(BodyType type) noexcept;
+        BodyType2D GetBodyType() const noexcept;
+        void SetBodyType(BodyType2D type) noexcept;
 
         const Vec2& GetPosition() const noexcept;
         void SetPosition(const Vec2& p) noexcept;
@@ -37,7 +37,7 @@ namespace BoltPhys {
         void AttachCollider(Collider2D* collider) noexcept;
 
     private:
-        BodyType m_bodyType = BodyType::Dynamic;
+        BodyType2D m_bodyType = BodyType2D::Dynamic;
         Vec2 m_position{};
         Vec2 m_velocity{};
         float m_mass = 1.0f;

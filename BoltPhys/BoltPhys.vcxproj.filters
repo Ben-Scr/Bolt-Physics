@@ -30,7 +30,7 @@
     <ClCompile Include="src\Collider2D.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysicsWorld.cpp">
+    <ClCompile Include="src\PhysicsWorld2D.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="src\PolygonCollider2D.cpp">
@@ -50,7 +50,7 @@
     <ClInclude Include="include\Body2D.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="include\BodyType.hpp">
+    <ClInclude Include="include\BodyType2D.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="include\BoxCollider2D.hpp">
@@ -71,7 +71,7 @@
     <ClInclude Include="include\Export.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="include\PhysicsWorld.hpp">
+    <ClInclude Include="include\PhysicsWorld2D.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="include\PolygonCollider2D.hpp">
@@ -86,7 +86,7 @@
     <ClInclude Include="include\Physics2D.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="include\BoltPhys.hpp">
+    <ClInclude Include="include\Core.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

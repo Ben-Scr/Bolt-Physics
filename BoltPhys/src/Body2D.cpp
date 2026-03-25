@@ -4,10 +4,10 @@
 namespace BoltPhys {
     Body2D::Body2D() noexcept
     {
-        SetBodyType(BodyType::Dynamic);
+        SetBodyType(BodyType2D::Dynamic);
     }
 
-    Body2D::Body2D(BodyType type) noexcept
+    Body2D::Body2D(BodyType2D type) noexcept
     {
         SetBodyType(type); 
     }
@@ -20,26 +20,26 @@ namespace BoltPhys {
         }
     }
 
-    BodyType Body2D::GetBodyType() const noexcept
+    BodyType2D Body2D::GetBodyType() const noexcept
     {
         return m_bodyType;
     }
 
-    void Body2D::SetBodyType(BodyType type) noexcept
+    void Body2D::SetBodyType(BodyType2D type) noexcept
     {
         m_bodyType = type;
 
         switch (m_bodyType) {
-        case BodyType::Static:
+        case BodyType2D::Static:
             SetGravityEnabled(false);
             SetBoundaryCheckEnabled(false);
             SetVelocity({ 0.0f, 0.0f });
             break;
-        case BodyType::Kinematic:
+        case BodyType2D::Kinematic:
             SetGravityEnabled(false);
             SetBoundaryCheckEnabled(true);
             break;
-        case BodyType::Dynamic:
+        case BodyType2D::Dynamic:
             SetGravityEnabled(true);
             SetBoundaryCheckEnabled(true);
             break;

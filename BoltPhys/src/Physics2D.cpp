@@ -11,7 +11,7 @@
 #include <cmath>
 
 namespace BoltPhys {
-    PhysicsWorld* Physics2D::s_context = nullptr;
+    PhysicsWorld2D* Physics2D::s_context = nullptr;
 
     namespace {
         bool ContainsPointInAABB(const AABB& aabb, const Vec2& point) noexcept
@@ -118,7 +118,7 @@ namespace BoltPhys {
         }
     }
 
-    void Physics2D::SetContext(PhysicsWorld& world) noexcept
+    void Physics2D::SetContext(PhysicsWorld2D& world) noexcept
     {
         s_context = &world;
     }

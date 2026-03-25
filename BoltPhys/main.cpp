@@ -2,7 +2,7 @@
 
 int main()
 {
-    BoltPhys::PhysicsWorld world;
+    BoltPhys::PhysicsWorld2D world;
     (void)world;
     return 0;
 }

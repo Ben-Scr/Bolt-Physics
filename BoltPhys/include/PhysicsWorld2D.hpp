@@ -5,15 +5,14 @@
 #include "Collider2D.hpp"
 #include "Contact.hpp"
 
-#include <cstddef>
 #include <vector>
 
 namespace BoltPhys {
-    class BOLT_PHYS_API PhysicsWorld
+    class BOLT_PHYS_API PhysicsWorld2D
     {
     public:
-        PhysicsWorld();
-        explicit PhysicsWorld(const WorldSettings& settings);
+        PhysicsWorld2D();
+        explicit PhysicsWorld2D(const WorldSettings& settings);
 
         void SetSettings(const WorldSettings& settings) noexcept;
         const WorldSettings& GetSettings() const noexcept;

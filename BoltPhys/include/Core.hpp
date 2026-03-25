@@ -1,6 +1,6 @@
 #pragma once
 #include "Body2D.hpp"
-#include "BodyType.hpp"
+#include "BodyType2D.hpp"
 
 #include "Collider2D.hpp"
 #include "BoxCollider2D.hpp"

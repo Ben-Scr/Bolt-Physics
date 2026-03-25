@@ -21,8 +21,8 @@
   <ItemGroup>
     <ClInclude Include="include\AABB.hpp" />
     <ClInclude Include="include\Body2D.hpp" />
-    <ClInclude Include="include\BodyType.hpp" />
-    <ClInclude Include="include\BoltPhys.hpp" />
+    <ClInclude Include="include\BodyType2D.hpp" />
+    <ClInclude Include="include\Core.hpp" />
     <ClInclude Include="include\BoxCollider2D.hpp" />
     <ClInclude Include="include\CircleCollider.hpp" />
     <ClInclude Include="include\Collider2D.hpp" />
@@ -30,7 +30,7 @@
     <ClInclude Include="include\Contact.hpp" />
     <ClInclude Include="include\Export.hpp" />
     <ClInclude Include="include\Physics2D.hpp" />
-    <ClInclude Include="include\PhysicsWorld.hpp" />
+    <ClInclude Include="include\PhysicsWorld2D.hpp" />
     <ClInclude Include="include\PolygonCollider2D.hpp" />
     <ClInclude Include="include\Vec2.hpp" />
     <ClInclude Include="include\WorldSettings.hpp" />
@@ -42,7 +42,7 @@
     <ClCompile Include="src\CircleCollider.cpp" />
     <ClCompile Include="src\Collider2D.cpp" />
     <ClCompile Include="src\Physics2D.cpp" />
-    <ClCompile Include="src\PhysicsWorld.cpp" />
+    <ClCompile Include="src\PhysicsWorld2D.cpp" />
     <ClCompile Include="src\PolygonCollider2D.cpp" />
     <ClCompile Include="src\Vec2.cpp" />
   </ItemGroup>
@@ -52,6 +52,7 @@
     <ProjectGuid>{968b1b8d-ea65-4c35-864f-7aa1262f867f}</ProjectGuid>
     <RootNamespace>BoltPhys</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Bolt-Physics2D</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

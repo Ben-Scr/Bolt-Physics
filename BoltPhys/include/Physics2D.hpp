@@ -5,12 +5,12 @@
 
 namespace BoltPhys {
     class Collider2D;
-    class PhysicsWorld;
+    class PhysicsWorld2D;
 
     class BOLT_PHYS_API Physics2D
     {
     public:
-        static void SetContext(PhysicsWorld& world) noexcept;
+        static void SetContext(PhysicsWorld2D& world) noexcept;
         static void ClearContext() noexcept;
 
         static Contact* OverlapsWith(Collider2D& collider);
@@ -20,6 +20,6 @@ namespace BoltPhys {
         static bool ContainsPoint(Collider2D& collider, const Vec2& point);
 
     private:
-        static PhysicsWorld* s_context;
+        static PhysicsWorld2D* s_context;
     };
 }

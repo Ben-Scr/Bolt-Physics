@@ -1,8 +1,4 @@
-#include "PhysicsWorld.hpp"
-
-#include "BoxCollider2D.hpp"
-#include "CircleCollider.hpp"
-#include "PolygonCollider2D.hpp"
+#include "PhysicsWorld2D.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -93,13 +89,13 @@ namespace BoltPhys {
         };
     }
 
-    PhysicsWorld::PhysicsWorld() = default;
+    PhysicsWorld2D::PhysicsWorld2D() = default;
 
-    PhysicsWorld::PhysicsWorld(const WorldSettings& settings)
+    PhysicsWorld2D::PhysicsWorld2D(const WorldSettings& settings)
         : m_settings(SanitizeSettings(settings))
     {}
 
-    WorldSettings PhysicsWorld::SanitizeSettings(const WorldSettings& settings) noexcept
+    WorldSettings PhysicsWorld2D::SanitizeSettings(const WorldSettings& settings) noexcept
     {
         WorldSettings sanitized = settings;
 
@@ -116,22 +112,22 @@ namespace BoltPhys {
         return sanitized;
     }
 
-    void PhysicsWorld::SetSettings(const WorldSettings& settings) noexcept
+    void PhysicsWorld2D::SetSettings(const WorldSettings& settings) noexcept
     {
         m_settings = SanitizeSettings(settings);
     }
 
-    const WorldSettings& PhysicsWorld::GetSettings() const noexcept
+    const WorldSettings& PhysicsWorld2D::GetSettings() const noexcept
     {
         return m_settings;
     }
 
-    const std::vector<Collider2D*>& PhysicsWorld::GetColliders() const noexcept
+    const std::vector<Collider2D*>& PhysicsWorld2D::GetColliders() const noexcept
     {
         return m_colliders;
     }
 
-    bool PhysicsWorld::RegisterBody(Body2D& body)
+    bool PhysicsWorld2D::RegisterBody(Body2D& body)
     {
         if (Contains(m_bodies, body)) {
             return false;
@@ -141,7 +137,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::UnregisterBody(Body2D& body)
+    bool PhysicsWorld2D::UnregisterBody(Body2D& body)
     {
         const auto it = std::find(m_bodies.begin(), m_bodies.end(), &body);
         if (it == m_bodies.end()) {
@@ -160,7 +156,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::RegisterCollider(Collider2D& collider)
+    bool PhysicsWorld2D::RegisterCollider(Collider2D& collider)
     {
         if (Contains(m_colliders, collider)) {
             return false;
@@ -170,7 +166,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::UnregisterCollider(Collider2D& collider)
+    bool PhysicsWorld2D::UnregisterCollider(Collider2D& collider)
     {
         const auto it = std::find(m_colliders.begin(), m_colliders.end(), &collider);
         if (it == m_colliders.end()) {
@@ -194,7 +190,7 @@ namespace BoltPhys {
         return true;
     }
 
-    bool PhysicsWorld::AttachCollider(Body2D& body, Collider2D& collider)
+    bool PhysicsWorld2D::AttachCollider(Body2D& body, Collider2D& collider)
     {
         if (!Contains(m_bodies, body) || !Contains(m_colliders, collider)) {
             return false;
@@ -213,12 +209,12 @@ namespace BoltPhys {
         return true;
     }
 
-    void PhysicsWorld::DetachCollider(Body2D& body)
+    void PhysicsWorld2D::DetachCollider(Body2D& body)
     {
         DetachBodyAndCollider(body);
     }
 
-    void PhysicsWorld::Step(float dt)
+    void PhysicsWorld2D::Step(float dt)
     {
         if (dt <= 0.0f) {
             return;
@@ -229,29 +225,29 @@ namespace BoltPhys {
         ResolveContacts();
     }
 
-    std::size_t PhysicsWorld::GetBodyCount() const noexcept
+    std::size_t PhysicsWorld2D::GetBodyCount() const noexcept
     {
         return m_bodies.size();
     }
 
-    std::size_t PhysicsWorld::GetColliderCount() const noexcept
+    std::size_t PhysicsWorld2D::GetColliderCount() const noexcept
     {
         return m_colliders.size();
     }
 
-    const std::vector<Contact>& PhysicsWorld::GetContacts() const noexcept
+    const std::vector<Contact>& PhysicsWorld2D::GetContacts() const noexcept
     {
         return m_contacts;
     }
 
-    void PhysicsWorld::IntegrateBodies(float dt)
+    void PhysicsWorld2D::IntegrateBodies(float dt)
     {
         for (Body2D* body : m_bodies) {
-            if (body == nullptr || body->GetBodyType() == BodyType::Static) {
+            if (body == nullptr || body->GetBodyType() == BodyType2D::Static) {
                 continue;
             }
 
-            if (body->GetBodyType() == BodyType::Dynamic && body->IsGravityEnabled()) {
+            if (body->GetBodyType() == BodyType2D::Dynamic && body->IsGravityEnabled()) {
                 body->SetVelocity(body->GetVelocity() + (m_settings.gravity * dt));
             }
 
@@ -263,7 +259,7 @@ namespace BoltPhys {
         }
     }
 
-    void PhysicsWorld::ApplyWorldBounds(Body2D& body) const noexcept
+    void PhysicsWorld2D::ApplyWorldBounds(Body2D& body) const noexcept
     {
         Vec2 position = Clamp(body.GetPosition(), m_settings.worldMin, m_settings.worldMax);
         Vec2 velocity = body.GetVelocity();
@@ -279,7 +275,7 @@ namespace BoltPhys {
         body.SetVelocity(velocity);
     }
 
-    void PhysicsWorld::DetectCollisions()
+    void PhysicsWorld2D::DetectCollisions()
     {
         m_contacts.clear();
 
@@ -356,7 +352,7 @@ namespace BoltPhys {
         }
     }
 
-    void PhysicsWorld::ResolveContacts()
+    void PhysicsWorld2D::ResolveContacts()
     {
         for (const Contact& contact : m_contacts) {
             Body2D* bodyA = contact.bodyA;
@@ -365,8 +361,8 @@ namespace BoltPhys {
                 continue;
             }
 
-            const bool moveA = bodyA->GetBodyType() == BodyType::Dynamic;
-            const bool moveB = bodyB->GetBodyType() == BodyType::Dynamic;
+            const bool moveA = bodyA->GetBodyType() == BodyType2D::Dynamic;
+            const bool moveB = bodyB->GetBodyType() == BodyType2D::Dynamic;
 
             if (!moveA && !moveB) {
                 continue;
@@ -408,7 +404,7 @@ namespace BoltPhys {
         }
     }
 
-    Contact PhysicsWorld::BuildContact(Body2D& bodyA, Body2D& bodyB) const
+    Contact PhysicsWorld2D::BuildContact(Body2D& bodyA, Body2D& bodyB) const
     {
         Collider2D* colliderA = bodyA.GetCollider();
         Collider2D* colliderB = bodyB.GetCollider();
