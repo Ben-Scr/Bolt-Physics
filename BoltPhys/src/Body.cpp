@@ -7,6 +7,11 @@ namespace BoltPhys {
         SetBodyType(BodyType::Dynamic);
     }
 
+    explicit Body::Body(BodyType type)
+    {
+        SetBodyType(type); 
+    }
+
     Body::~Body()
     {
         if (m_collider != nullptr) {
