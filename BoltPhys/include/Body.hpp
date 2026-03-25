@@ -10,7 +10,7 @@ namespace BoltPhys {
     {
     public:
         Body() noexcept;
-        explicit Body(BodyType bodyType) noexcept;
+        explicit Body(BodyType type) noexcept;
         ~Body();
 
         BodyType GetBodyType() const noexcept;

@@ -7,7 +7,7 @@ namespace BoltPhys {
         SetBodyType(BodyType::Dynamic);
     }
 
-    explicit Body::Body(BodyType type)
+    Body::Body(BodyType type) noexcept
     {
         SetBodyType(type); 
     }
