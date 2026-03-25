@@ -46,6 +46,11 @@ namespace BoltPhys {
         return m_settings;
     }
 
+    const std::vector<Collider*>& PhysicsWorld::GetColliders() const noexcept
+    {
+        return m_colliders;
+    }
+
     bool PhysicsWorld::RegisterBody(Body& body)
     {
         if (Contains(m_bodies, body)) {

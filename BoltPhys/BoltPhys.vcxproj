@@ -30,6 +30,7 @@
     <ClInclude Include="include\Contact.hpp" />
     <ClInclude Include="include\Export.hpp" />
     <ClInclude Include="include\KinematicBody.hpp" />
+    <ClInclude Include="include\Physics2D.hpp" />
     <ClInclude Include="include\PhysicsWorld.hpp" />
     <ClInclude Include="include\PolygonCollider.hpp" />
     <ClInclude Include="include\Vec2.hpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\DynamicBody.cpp" />
     <ClCompile Include="src\KinematicBody.cpp" />
+    <ClCompile Include="src\Physics2D.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
     <ClCompile Include="src\PolygonCollider.cpp" />
     <ClCompile Include="src\StaticBody.cpp" />
