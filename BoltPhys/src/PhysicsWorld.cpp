@@ -5,8 +5,11 @@
 #include "PolygonCollider.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <cmath>
 #include <limits>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace BoltPhys {
     namespace {
@@ -27,6 +30,39 @@ namespace BoltPhys {
                 Clamp(value.x, minValue.x, maxValue.x),
                 Clamp(value.y, minValue.y, maxValue.y)
             };
+        }
+
+        struct CellCoord
+        {
+            int x = 0;
+            int y = 0;
+
+            bool operator==(const CellCoord& other) const noexcept
+            {
+                return x == other.x && y == other.y;
+            }
+        };
+
+        struct CellCoordHasher
+        {
+            std::size_t operator()(const CellCoord& coord) const noexcept
+            {
+                const std::size_t x = static_cast<std::size_t>(static_cast<std::uint32_t>(coord.x));
+                const std::size_t y = static_cast<std::size_t>(static_cast<std::uint32_t>(coord.y));
+                return x ^ (y + 0x9e3779b9 + (x << 6) + (x >> 2));
+            }
+        };
+
+        int ComputeCellIndex(float value, float cellSize) noexcept
+        {
+            return static_cast<int>(std::floor(value / cellSize));
+        }
+
+        std::uint64_t MakePairKey(std::size_t indexA, std::size_t indexB) noexcept
+        {
+            const std::uint64_t lower = static_cast<std::uint64_t>(std::min(indexA, indexB));
+            const std::uint64_t upper = static_cast<std::uint64_t>(std::max(indexA, indexB));
+            return (lower << 32) | upper;
         }
     }
 
@@ -191,25 +227,75 @@ namespace BoltPhys {
     {
         m_contacts.clear();
 
+        const float cellSize = std::max(m_settings.broadphaseCellSize, 0.001f);
+
+        std::unordered_map<CellCoord, std::vector<Body*>, CellCoordHasher> grid;
+        grid.reserve(m_bodies.size() * 2);
+
+        std::unordered_map<Body*, std::size_t> bodyIndices;
+        bodyIndices.reserve(m_bodies.size());
+
         for (std::size_t i = 0; i < m_bodies.size(); ++i) {
-            Body* bodyA = m_bodies[i];
-            if (bodyA == nullptr || bodyA->GetCollider() == nullptr) {
+            Body* body = m_bodies[i];
+            if (body == nullptr || body->GetCollider() == nullptr) {
                 continue;
             }
 
-            for (std::size_t j = i + 1; j < m_bodies.size(); ++j) {
-                Body* bodyB = m_bodies[j];
-                if (bodyB == nullptr || bodyB->GetCollider() == nullptr) {
+            bodyIndices[body] = i;
+
+            const AABB aabb = body->GetCollider()->ComputeAABB();
+            const int minX = ComputeCellIndex(aabb.min.x, cellSize);
+            const int maxX = ComputeCellIndex(aabb.max.x, cellSize);
+            const int minY = ComputeCellIndex(aabb.min.y, cellSize);
+            const int maxY = ComputeCellIndex(aabb.max.y, cellSize);
+
+            for (int y = minY; y <= maxY; ++y) {
+                for (int x = minX; x <= maxX; ++x) {
+                    grid[{ x, y }].push_back(body);
+                }
+            }
+        }
+
+        std::unordered_set<std::uint64_t> checkedPairs;
+        checkedPairs.reserve(m_bodies.size() * 2);
+
+        for (const auto& entry : grid) {
+            const std::vector<Body*>& cellBodies = entry.second;
+            if (cellBodies.size() < 2) {
+                continue;
+            }
+
+            for (std::size_t i = 0; i < cellBodies.size(); ++i) {
+                Body* bodyA = cellBodies[i];
+                if (bodyA == nullptr || bodyA->GetCollider() == nullptr) {
                     continue;
                 }
 
-                const AABB aabbA = bodyA->GetCollider()->ComputeAABB();
-                const AABB aabbB = bodyB->GetCollider()->ComputeAABB();
-                if (!aabbA.Intersects(aabbB)) {
-                    continue;
-                }
+                for (std::size_t j = i + 1; j < cellBodies.size(); ++j) {
+                    Body* bodyB = cellBodies[j];
+                    if (bodyB == nullptr || bodyB->GetCollider() == nullptr || bodyA == bodyB) {
+                        continue;
+                    }
 
-                m_contacts.push_back(BuildContact(*bodyA, *bodyB));
+                    const auto indexA = bodyIndices.find(bodyA);
+                    const auto indexB = bodyIndices.find(bodyB);
+                    if (indexA == bodyIndices.end() || indexB == bodyIndices.end()) {
+                        continue;
+                    }
+
+                    const std::uint64_t pairKey = MakePairKey(indexA->second, indexB->second);
+                    if (!checkedPairs.insert(pairKey).second) {
+                        continue;
+                    }
+
+                    const AABB aabbA = bodyA->GetCollider()->ComputeAABB();
+                    const AABB aabbB = bodyB->GetCollider()->ComputeAABB();
+                    if (!aabbA.Intersects(aabbB)) {
+                        continue;
+                    }
+
+                    m_contacts.push_back(BuildContact(*bodyA, *bodyB));
+                }
             }
         }
     }
