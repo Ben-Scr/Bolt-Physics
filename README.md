@@ -1,9 +1,9 @@
-# BoltPhys
+# Bolt-Physics
 
-BoltPhys is a minimalist 2D physics module for C++ with a clear separation between `Body2D`, colliders, and a registration-based `PhysicsWorld`.
+Bolt-Physics2D is a minimalist 2D physics module for C++ with a clear separation between `Body2D`, colliders, and a registration-based `PhysicsWorld`.
 
 ## Build target
-BoltPhys is configured as a **static library** in all Visual Studio configurations (`Debug/Release` and `Win32/x64`).
+Bolt-Physics2D is configured as a **static library** in all Visual Studio configurations (`Debug/Release` and `Win32/x64`).
 
 - Project output type: `StaticLibrary`
 - Preprocessor define: `BT_STATIC`
