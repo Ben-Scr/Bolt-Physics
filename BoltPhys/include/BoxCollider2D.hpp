@@ -6,6 +6,7 @@ namespace BoltPhys {
     class BOLT_PHYS_API BoxCollider2D final : public Collider2D
     {
     public:
+        BoxCollider2D() noexcept;
         explicit BoxCollider2D(const Vec2& halfExtents);
 
         const Vec2& GetHalfExtents() const noexcept;

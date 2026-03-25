@@ -3,6 +3,11 @@
 #include "Body2D.hpp"
 
 namespace BoltPhys {
+    BoxCollider2D::BoxCollider2D() noexcept
+        : Collider2D(ColliderType::Box), m_halfExtents({ 0.5f, 0.5f }) {
+
+    }
+
     BoxCollider2D::BoxCollider2D(const Vec2& halfExtents)
         : Collider2D(ColliderType::Box),
         m_halfExtents(halfExtents)
