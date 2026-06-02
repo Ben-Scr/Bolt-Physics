@@ -1,7 +1,7 @@
--- Axiom-Physics build script
+-- Index-Physics build script
 -- Generate project files with: vendor\bin\premake5.exe vs2022   (or run Setup.bat)
 
-workspace "Axiom-Physics"
+workspace "Index-Physics"
     architecture "x86_64"
     startproject "Tests"
 
@@ -19,7 +19,7 @@ workspace "Axiom-Physics"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-project "Axiom-Physics"
+project "Index-Physics"
     location "."
     kind "StaticLib"
     language "C++"
@@ -51,19 +51,19 @@ project "Axiom-Physics"
         defines { "_CRT_SECURE_NO_WARNINGS" }
 
     filter "configurations:Debug"
-        defines { "AXIOM_PHYS_DEBUG", "_DEBUG" }
+        defines { "INDEX_PHYS_DEBUG", "_DEBUG" }
         runtime "Debug"
         symbols "on"
         optimize "off"
 
     filter "configurations:Release"
-        defines { "AXIOM_PHYS_RELEASE", "NDEBUG" }
+        defines { "INDEX_PHYS_RELEASE", "NDEBUG" }
         runtime "Release"
         symbols "on"
         optimize "on"
 
     filter "configurations:Dist"
-        defines { "AXIOM_PHYS_DIST", "NDEBUG" }
+        defines { "INDEX_PHYS_DIST", "NDEBUG" }
         runtime "Release"
         symbols "off"
         optimize "full"
@@ -96,7 +96,7 @@ project "Tests"
 
     links
     {
-        "Axiom-Physics"
+        "Index-Physics"
     }
 
     filter "system:windows"
@@ -104,19 +104,19 @@ project "Tests"
         defines { "_CRT_SECURE_NO_WARNINGS" }
 
     filter "configurations:Debug"
-        defines { "AXIOM_PHYS_DEBUG", "_DEBUG" }
+        defines { "INDEX_PHYS_DEBUG", "_DEBUG" }
         runtime "Debug"
         symbols "on"
         optimize "off"
 
     filter "configurations:Release"
-        defines { "AXIOM_PHYS_RELEASE", "NDEBUG" }
+        defines { "INDEX_PHYS_RELEASE", "NDEBUG" }
         runtime "Release"
         symbols "on"
         optimize "on"
 
     filter "configurations:Dist"
-        defines { "AXIOM_PHYS_DIST", "NDEBUG" }
+        defines { "INDEX_PHYS_DIST", "NDEBUG" }
         runtime "Release"
         symbols "off"
         optimize "full"

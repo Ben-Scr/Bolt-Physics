@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace AxiomPhys::Tests {
+namespace IndexPhys::Tests {
 
     struct TestCase
     {
@@ -54,37 +54,37 @@ namespace AxiomPhys::Tests {
 
 }
 
-#define AXIOM_TEST_CONCAT_IMPL(a, b) a##b
-#define AXIOM_TEST_CONCAT(a, b) AXIOM_TEST_CONCAT_IMPL(a, b)
+#define INDEX_TEST_CONCAT_IMPL(a, b) a##b
+#define INDEX_TEST_CONCAT(a, b) INDEX_TEST_CONCAT_IMPL(a, b)
 
-#define AXIOM_TEST_CASE(NAME)                                                      \
-    static void AXIOM_TEST_CONCAT(Test_, NAME)();                                  \
-    static const ::AxiomPhys::Tests::AutoRegister AXIOM_TEST_CONCAT(reg_, NAME) {  \
-        #NAME, &AXIOM_TEST_CONCAT(Test_, NAME)                                     \
+#define INDEX_TEST_CASE(NAME)                                                      \
+    static void INDEX_TEST_CONCAT(Test_, NAME)();                                  \
+    static const ::IndexPhys::Tests::AutoRegister INDEX_TEST_CONCAT(reg_, NAME) {  \
+        #NAME, &INDEX_TEST_CONCAT(Test_, NAME)                                     \
     };                                                                             \
-    static void AXIOM_TEST_CONCAT(Test_, NAME)()
+    static void INDEX_TEST_CONCAT(Test_, NAME)()
 
 #define EXPECT_TRUE(cond) do {                                                     \
-        ++::AxiomPhys::Tests::AssertionCount();                                    \
+        ++::IndexPhys::Tests::AssertionCount();                                    \
         if (!(cond)) {                                                             \
-            ::AxiomPhys::Tests::RecordFailure(#cond, __FILE__, __LINE__);          \
+            ::IndexPhys::Tests::RecordFailure(#cond, __FILE__, __LINE__);          \
         }                                                                          \
     } while (0)
 
 #define EXPECT_FALSE(cond) EXPECT_TRUE(!(cond))
 
 #define EXPECT_EQ(a, b) do {                                                       \
-        ++::AxiomPhys::Tests::AssertionCount();                                    \
+        ++::IndexPhys::Tests::AssertionCount();                                    \
         if (!((a) == (b))) {                                                       \
-            ::AxiomPhys::Tests::RecordFailure(#a " == " #b, __FILE__, __LINE__);   \
+            ::IndexPhys::Tests::RecordFailure(#a " == " #b, __FILE__, __LINE__);   \
         }                                                                          \
     } while (0)
 
 #define EXPECT_NEAR(a, b, eps) do {                                                \
-        ++::AxiomPhys::Tests::AssertionCount();                                    \
+        ++::IndexPhys::Tests::AssertionCount();                                    \
         const double _da = static_cast<double>(a);                                 \
         const double _db = static_cast<double>(b);                                 \
         if (std::fabs(_da - _db) > (eps)) {                                        \
-            ::AxiomPhys::Tests::RecordFailure(#a " ~= " #b, __FILE__, __LINE__);   \
+            ::IndexPhys::Tests::RecordFailure(#a " ~= " #b, __FILE__, __LINE__);   \
         }                                                                          \
     } while (0)

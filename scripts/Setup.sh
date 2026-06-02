@@ -3,11 +3,15 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
+# Konstante Pfade, relativ zu diesem Skript (scripts/).
+readonly VENDORED_PREMAKE="../vendor/bin/premake5"
+readonly PREMAKE_FILE="../premake5.lua"
+
 # Locate a premake5 binary. Prefer a vendored one if it's executable on this
 # platform; otherwise fall back to whatever is in PATH.
 PREMAKE_BIN=""
-if [ -x "vendor/bin/premake5" ]; then
-    PREMAKE_BIN="./vendor/bin/premake5"
+if [ -x "$VENDORED_PREMAKE" ]; then
+    PREMAKE_BIN="$VENDORED_PREMAKE"
 elif command -v premake5 >/dev/null 2>&1; then
     PREMAKE_BIN="premake5"
 else
@@ -29,5 +33,5 @@ else
 fi
 
 echo "[Setup] Using $PREMAKE_BIN with action: $ACTION"
-"$PREMAKE_BIN" "$ACTION"
+"$PREMAKE_BIN" --file="$PREMAKE_FILE" "$ACTION"
 echo "[Setup] Done."

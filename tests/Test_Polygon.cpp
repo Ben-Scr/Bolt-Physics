@@ -8,7 +8,7 @@
 
 #include <vector>
 
-using namespace AxiomPhys;
+using namespace IndexPhys;
 
 namespace {
     // CCW-wound triangle centered on local origin.
@@ -31,7 +31,7 @@ namespace {
     }
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsTriangleOverlap)
+INDEX_TEST_CASE(Polygon_TriangleVsTriangleOverlap)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.5f, 0.0f }); // overlapping
@@ -47,7 +47,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsTriangleOverlap)
     EXPECT_TRUE(contact->penetration > 0.0f);
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsTriangleSeparated)
+INDEX_TEST_CASE(Polygon_TriangleVsTriangleSeparated)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 5.0f, 0.0f }); // far apart
@@ -62,7 +62,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsTriangleSeparated)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Polygon_AABBOverlapsButPolygonsDont)
+INDEX_TEST_CASE(Polygon_AABBOverlapsButPolygonsDont)
 {
     // Two CCW triangles whose AABBs overlap but whose filled areas are separated
     // by a diagonal gap. This is the case the prior AABB-only narrowphase got
@@ -96,7 +96,7 @@ AXIOM_TEST_CASE(Polygon_AABBOverlapsButPolygonsDont)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsTriangleTangent)
+INDEX_TEST_CASE(Polygon_TriangleVsTriangleTangent)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.0f, 0.0f });
@@ -122,7 +122,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsTriangleTangent)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsCircleTangent)
+INDEX_TEST_CASE(Polygon_TriangleVsCircleTangent)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.0f, 1.4f });
@@ -138,7 +138,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsCircleTangent)
     EXPECT_FALSE(circlePoly.has_value());
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsBoxTangent)
+INDEX_TEST_CASE(Polygon_TriangleVsBoxTangent)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.0f, 1.5f });
@@ -152,7 +152,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsBoxTangent)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsBox)
+INDEX_TEST_CASE(Polygon_TriangleVsBox)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.8f, 0.0f });
@@ -167,7 +167,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsBox)
     EXPECT_TRUE(contact->penetration > 0.0f);
 }
 
-AXIOM_TEST_CASE(Polygon_BoxVsTriangleNormalIsFlipped)
+INDEX_TEST_CASE(Polygon_BoxVsTriangleNormalIsFlipped)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.8f, 0.0f });
@@ -186,7 +186,7 @@ AXIOM_TEST_CASE(Polygon_BoxVsTriangleNormalIsFlipped)
     EXPECT_NEAR(contactPolyBox->penetration, contactBoxPoly->penetration, 1e-5);
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsCircleHit)
+INDEX_TEST_CASE(Polygon_TriangleVsCircleHit)
 {
     // Circle near triangle's tip; should overlap.
     Body a; a.SetPosition({ 0.0f, 0.0f });
@@ -202,7 +202,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsCircleHit)
     EXPECT_TRUE(contact->penetration > 0.0f);
 }
 
-AXIOM_TEST_CASE(Polygon_TriangleVsCircleClear)
+INDEX_TEST_CASE(Polygon_TriangleVsCircleClear)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.0f, 5.0f });
@@ -216,7 +216,7 @@ AXIOM_TEST_CASE(Polygon_TriangleVsCircleClear)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Polygon_CircleVsTriangleNormalIsFlipped)
+INDEX_TEST_CASE(Polygon_CircleVsTriangleNormalIsFlipped)
 {
     Body a; a.SetPosition({ 0.0f, 0.0f });
     Body b; b.SetPosition({ 0.0f, 1.2f });
@@ -234,7 +234,7 @@ AXIOM_TEST_CASE(Polygon_CircleVsTriangleNormalIsFlipped)
     EXPECT_NEAR(polyCircle->normal.y, -circlePoly->normal.y, 1e-5);
 }
 
-AXIOM_TEST_CASE(Polygon_QuadVsQuadEquivalentToBox)
+INDEX_TEST_CASE(Polygon_QuadVsQuadEquivalentToBox)
 {
     // A 4-vertex polygon coinciding with a box should yield the same overlap
     // as box-vs-box. We don't compare contacts directly, just both detect it.

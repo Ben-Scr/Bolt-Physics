@@ -13,8 +13,8 @@
 #include <limits>
 #include <vector>
 
-namespace AxiomPhys {
-    PhysicsWorld* Physics2D::s_context = nullptr;
+namespace IndexPhys {
+    PhysicsWorld* Physics2D::s_Context = nullptr;
 
     namespace {
         Vec2 GetColliderWorldPosition(const Collider& collider) noexcept
@@ -443,30 +443,250 @@ namespace AxiomPhys {
             // Box-vs-box: AABB is exact since neither shape rotates.
             return NarrowphaseAABB(a, b);
         }
+
+        // ---- Query support: validation, overlap probes, raycast -------------------
+
+        bool IsFinite(float v) noexcept
+        {
+            return std::isfinite(v);
+        }
+
+        bool IsFinite(const Vec2& v) noexcept
+        {
+            return std::isfinite(v.x) && std::isfinite(v.y);
+        }
+
+        // Iterates the active world and returns the first / all colliders the probe
+        // overlaps. The probe is a temporary not registered in the world, so it can
+        // never match itself.
+        const Collider* OverlapShapeFirst(Collider& probe)
+        {
+            PhysicsWorld* context = Physics2D::GetContext();
+            if (context == nullptr) {
+                return nullptr;
+            }
+            for (Collider* other : context->GetColliders()) {
+                if (other == nullptr) {
+                    continue;
+                }
+                if (Physics2D::OverlapsWith(probe, *other)) {
+                    return other;
+                }
+            }
+            return nullptr;
+        }
+
+        std::vector<const Collider*> OverlapShapeAll(Collider& probe)
+        {
+            std::vector<const Collider*> result;
+            PhysicsWorld* context = Physics2D::GetContext();
+            if (context == nullptr) {
+                return result;
+            }
+            for (Collider* other : context->GetColliders()) {
+                if (other == nullptr) {
+                    continue;
+                }
+                if (Physics2D::OverlapsWith(probe, *other)) {
+                    result.push_back(other);
+                }
+            }
+            return result;
+        }
+
+        // Four local-space corners of a box of the given half-extents, rotated CCW.
+        std::vector<Vec2> MakeRotatedBoxVerts(const Vec2& half, float degrees) noexcept
+        {
+            const float radians = degrees * 0.01745329252f; // pi / 180
+            const float c = std::cos(radians);
+            const float s = std::sin(radians);
+            auto rotate = [&](float x, float y) noexcept -> Vec2 {
+                return Vec2{ x * c - y * s, x * s + y * c };
+            };
+            return {
+                rotate(-half.x, -half.y),
+                rotate( half.x, -half.y),
+                rotate( half.x,  half.y),
+                rotate(-half.x,  half.y)
+            };
+        }
+
+        struct RayHit
+        {
+            bool  hit = false;
+            float t = 0.0f;
+            Vec2  normal{ 0.0f, 0.0f };
+        };
+
+        // Ray (origin + dir*t, dir normalized) vs circle. Origin inside -> t = 0.
+        RayHit RaycastCircle(const Vec2& origin, const Vec2& dir, float maxDistance,
+                             const Vec2& center, float radius) noexcept
+        {
+            const Vec2 m = origin - center;
+            const float b = Dot(m, dir);
+            const float c = Dot(m, m) - radius * radius;
+
+            if (c <= 0.0f) {
+                return { true, 0.0f, -dir }; // origin inside / on the circle
+            }
+
+            const float discriminant = b * b - c;
+            if (discriminant < 0.0f) {
+                return {};
+            }
+
+            const float t = -b - std::sqrt(discriminant);
+            if (t < 0.0f || t > maxDistance) {
+                return {};
+            }
+
+            const Vec2 point = origin + dir * t;
+            return { true, t, Normalize(point - center) };
+        }
+
+        // Ray vs axis-aligned box (slab method). Origin inside -> t = 0.
+        RayHit RaycastBox(const Vec2& origin, const Vec2& dir, float maxDistance,
+                          const Vec2& boxMin, const Vec2& boxMax) noexcept
+        {
+            float tNear = -std::numeric_limits<float>::infinity();
+            float tFar  =  std::numeric_limits<float>::infinity();
+            int   hitAxis = 0;
+            float hitSign = 0.0f;
+
+            const float o[2]  = { origin.x, origin.y };
+            const float d[2]  = { dir.x, dir.y };
+            const float lo[2] = { boxMin.x, boxMin.y };
+            const float hi[2] = { boxMax.x, boxMax.y };
+
+            for (int k = 0; k < 2; ++k) {
+                if (std::fabs(d[k]) < 1e-8f) {
+                    if (o[k] < lo[k] || o[k] > hi[k]) {
+                        return {}; // parallel to this slab and outside it
+                    }
+                    continue;
+                }
+                const float inv = 1.0f / d[k];
+                float t1 = (lo[k] - o[k]) * inv; // lo plane
+                float t2 = (hi[k] - o[k]) * inv; // hi plane
+                float sign = -1.0f;              // entering through the lo plane
+                if (t1 > t2) {
+                    std::swap(t1, t2);
+                    sign = 1.0f;                 // entering through the hi plane
+                }
+                if (t1 > tNear) {
+                    tNear = t1;
+                    hitAxis = k;
+                    hitSign = sign;
+                }
+                if (t2 < tFar) {
+                    tFar = t2;
+                }
+                if (tNear > tFar) {
+                    return {};
+                }
+            }
+
+            if (tFar < 0.0f) {
+                return {};
+            }
+            if (tNear < 0.0f) {
+                return { true, 0.0f, -dir }; // origin inside the box
+            }
+            if (tNear > maxDistance) {
+                return {};
+            }
+
+            const Vec2 normal = (hitAxis == 0) ? Vec2{ hitSign, 0.0f } : Vec2{ 0.0f, hitSign };
+            return { true, tNear, normal };
+        }
+
+        // Ray vs convex polygon (Cyrus-Beck half-plane clip). Origin inside -> t = 0.
+        RayHit RaycastPolygon(const Vec2& origin, const Vec2& dir, float maxDistance,
+                              const std::vector<Vec2>& verts) noexcept
+        {
+            const std::size_t count = verts.size();
+            if (count < 3) {
+                return {};
+            }
+
+            const Vec2 centroid = ComputeCentroid(verts.data(), count);
+            float tEnter = -std::numeric_limits<float>::infinity();
+            float tLeave =  std::numeric_limits<float>::infinity();
+            Vec2  enterNormal{ 0.0f, 0.0f };
+
+            for (std::size_t i = 0; i < count; ++i) {
+                const Vec2 v0 = verts[i];
+                const Vec2 v1 = verts[(i + 1) % count];
+                const Vec2 edge = v1 - v0;
+                Vec2 normal{ edge.y, -edge.x };
+                const Vec2 mid = (v0 + v1) * 0.5f;
+                if (Dot(mid - centroid, normal) < 0.0f) {
+                    normal = -normal; // make it point outward
+                }
+                normal = Normalize(normal);
+
+                const float denominator = Dot(dir, normal);
+                const float numerator = Dot(v0 - origin, normal);
+
+                if (std::fabs(denominator) < 1e-8f) {
+                    if (numerator < 0.0f) {
+                        return {}; // parallel to this edge and outside it
+                    }
+                    continue;
+                }
+
+                const float t = numerator / denominator;
+                if (denominator < 0.0f) {
+                    if (t > tEnter) {
+                        tEnter = t;
+                        enterNormal = normal;
+                    }
+                }
+                else {
+                    if (t < tLeave) {
+                        tLeave = t;
+                    }
+                }
+                if (tEnter > tLeave) {
+                    return {};
+                }
+            }
+
+            if (tEnter > tLeave || tLeave < 0.0f) {
+                return {};
+            }
+            if (tEnter < 0.0f) {
+                return { true, 0.0f, -dir }; // origin inside the polygon
+            }
+            if (tEnter > maxDistance) {
+                return {};
+            }
+            return { true, tEnter, enterNormal };
+        }
     }
 
     void Physics2D::SetContext(PhysicsWorld& world) noexcept
     {
-        s_context = &world;
+        s_Context = &world;
     }
 
     void Physics2D::ClearContext() noexcept
     {
-        s_context = nullptr;
+        s_Context = nullptr;
     }
 
     PhysicsWorld* Physics2D::GetContext() noexcept
     {
-        return s_context;
+        return s_Context;
     }
 
     std::optional<Contact> Physics2D::OverlapsWith(Collider& collider)
     {
-        if (s_context == nullptr) {
+        if (s_Context == nullptr) {
             return std::nullopt;
         }
 
-        for (Collider* other : s_context->GetColliders()) {
+        for (Collider* other : s_Context->GetColliders()) {
             if (other == nullptr || other == &collider) {
                 continue;
             }
@@ -486,11 +706,11 @@ namespace AxiomPhys {
 
     const Collider* Physics2D::ContainsPoint(const Vec2& point)
     {
-        if (s_context == nullptr) {
+        if (s_Context == nullptr) {
             return nullptr;
         }
 
-        for (Collider* collider : s_context->GetColliders()) {
+        for (Collider* collider : s_Context->GetColliders()) {
             if (collider == nullptr) {
                 continue;
             }
@@ -506,5 +726,214 @@ namespace AxiomPhys {
     bool Physics2D::ContainsPoint(Collider& collider, const Vec2& point)
     {
         return ColliderContainsPoint(collider, point);
+    }
+
+    RaycastHit Physics2D::Raycast(const Vec2& origin, const Vec2& direction, float maxDistance)
+    {
+        RaycastHit result;
+
+        if (LengthSq(direction) <= 1e-12f || !IsFinite(origin) || !IsFinite(direction)) {
+            return result;
+        }
+        if (!(maxDistance > 0.0f) || std::isnan(maxDistance)) {
+            return result;
+        }
+        if (s_Context == nullptr) {
+            return result;
+        }
+
+        const Vec2 dir = Normalize(direction);
+
+        float bestT = std::numeric_limits<float>::infinity();
+        const Collider* bestCollider = nullptr;
+        Vec2 bestNormal{ 0.0f, 0.0f };
+
+        for (Collider* collider : s_Context->GetColliders()) {
+            if (collider == nullptr) {
+                continue;
+            }
+
+            RayHit rayHit;
+            switch (collider->GetType()) {
+            case ColliderType::Circle: {
+                CircleCollider& circle = static_cast<CircleCollider&>(*collider);
+                rayHit = RaycastCircle(origin, dir, maxDistance,
+                                       GetColliderWorldPosition(circle), circle.GetRadius());
+                break;
+            }
+            case ColliderType::Box: {
+                BoxCollider& box = static_cast<BoxCollider&>(*collider);
+                const Vec2 center = GetColliderWorldPosition(box);
+                const Vec2 half = box.GetHalfExtents();
+                rayHit = RaycastBox(origin, dir, maxDistance, center - half, center + half);
+                break;
+            }
+            case ColliderType::Polygon: {
+                PolygonCollider& polygon = static_cast<PolygonCollider&>(*collider);
+                rayHit = RaycastPolygon(origin, dir, maxDistance, PolygonToWorldVertices(polygon));
+                break;
+            }
+            }
+
+            if (rayHit.hit && rayHit.t < bestT) {
+                bestT = rayHit.t;
+                bestCollider = collider;
+                bestNormal = rayHit.normal;
+            }
+        }
+
+        if (bestCollider == nullptr) {
+            return result;
+        }
+
+        result.hit = true;
+        result.collider = bestCollider;
+        result.point = origin + dir * bestT;
+        result.normal = bestNormal;
+        result.distance = bestT;
+        return result;
+    }
+
+    bool Physics2D::RaycastCheck(const Vec2& origin, const Vec2& direction, float maxDistance)
+    {
+        return Raycast(origin, direction, maxDistance).hit;
+    }
+
+    const Collider* Physics2D::OverlapCircle(const Vec2& origin, float radius)
+    {
+        if (!(radius > 0.0f) || !IsFinite(radius) || !IsFinite(origin)) {
+            return nullptr;
+        }
+        Body probe;
+        probe.SetPosition(origin);
+        CircleCollider shape(radius);
+        shape.SetBody(&probe);
+        return OverlapShapeFirst(shape);
+    }
+
+    bool Physics2D::OverlapCircleCheck(const Vec2& origin, float radius)
+    {
+        return OverlapCircle(origin, radius) != nullptr;
+    }
+
+    std::vector<const Collider*> Physics2D::OverlapCircleAll(const Vec2& origin, float radius)
+    {
+        if (!(radius > 0.0f) || !IsFinite(radius) || !IsFinite(origin)) {
+            return {};
+        }
+        Body probe;
+        probe.SetPosition(origin);
+        CircleCollider shape(radius);
+        shape.SetBody(&probe);
+        return OverlapShapeAll(shape);
+    }
+
+    const Collider* Physics2D::OverlapBox(const Vec2& origin, const Vec2& size, float rotationDegrees)
+    {
+        if (!(size.x > 0.0f) || !(size.y > 0.0f) || !IsFinite(size)
+            || !IsFinite(rotationDegrees) || !IsFinite(origin)) {
+            return nullptr;
+        }
+
+        Body probe;
+        probe.SetPosition(origin);
+        const Vec2 half = size * 0.5f;
+
+        if (std::fabs(rotationDegrees) <= 1e-4f) {
+            BoxCollider shape(half);
+            shape.SetBody(&probe);
+            return OverlapShapeFirst(shape);
+        }
+
+        PolygonCollider shape;
+        shape.SetVertices(MakeRotatedBoxVerts(half, rotationDegrees));
+        shape.SetBody(&probe);
+        return OverlapShapeFirst(shape);
+    }
+
+    bool Physics2D::OverlapBoxCheck(const Vec2& origin, const Vec2& size, float rotationDegrees)
+    {
+        return OverlapBox(origin, size, rotationDegrees) != nullptr;
+    }
+
+    std::vector<const Collider*> Physics2D::OverlapBoxAll(const Vec2& origin, const Vec2& size, float rotationDegrees)
+    {
+        if (!(size.x > 0.0f) || !(size.y > 0.0f) || !IsFinite(size)
+            || !IsFinite(rotationDegrees) || !IsFinite(origin)) {
+            return {};
+        }
+
+        Body probe;
+        probe.SetPosition(origin);
+        const Vec2 half = size * 0.5f;
+
+        if (std::fabs(rotationDegrees) <= 1e-4f) {
+            BoxCollider shape(half);
+            shape.SetBody(&probe);
+            return OverlapShapeAll(shape);
+        }
+
+        PolygonCollider shape;
+        shape.SetVertices(MakeRotatedBoxVerts(half, rotationDegrees));
+        shape.SetBody(&probe);
+        return OverlapShapeAll(shape);
+    }
+
+    const Collider* Physics2D::OverlapPolygon(const Vec2& origin, const Vec2* points, std::size_t count)
+    {
+        if (points == nullptr || count < 3 || !IsFinite(origin)) {
+            return nullptr;
+        }
+        for (std::size_t i = 0; i < count; ++i) {
+            if (!IsFinite(points[i])) {
+                return nullptr;
+            }
+        }
+        Body probe;
+        probe.SetPosition(origin);
+        PolygonCollider shape;
+        shape.SetVertices(points, count);
+        shape.SetBody(&probe);
+        return OverlapShapeFirst(shape);
+    }
+
+    bool Physics2D::OverlapPolygonCheck(const Vec2& origin, const Vec2* points, std::size_t count)
+    {
+        return OverlapPolygon(origin, points, count) != nullptr;
+    }
+
+    std::vector<const Collider*> Physics2D::OverlapPolygonAll(const Vec2& origin, const Vec2* points, std::size_t count)
+    {
+        if (points == nullptr || count < 3 || !IsFinite(origin)) {
+            return {};
+        }
+        for (std::size_t i = 0; i < count; ++i) {
+            if (!IsFinite(points[i])) {
+                return {};
+            }
+        }
+        Body probe;
+        probe.SetPosition(origin);
+        PolygonCollider shape;
+        shape.SetVertices(points, count);
+        shape.SetBody(&probe);
+        return OverlapShapeAll(shape);
+    }
+
+    std::vector<const Collider*> Physics2D::ContainsPointAll(const Vec2& point)
+    {
+        std::vector<const Collider*> result;
+        if (s_Context == nullptr) {
+            return result;
+        }
+        for (Collider* collider : s_Context->GetColliders()) {
+            if (collider == nullptr) {
+                continue;
+            }
+            if (ContainsPoint(*collider, point)) {
+                result.push_back(collider);
+            }
+        }
+        return result;
     }
 }

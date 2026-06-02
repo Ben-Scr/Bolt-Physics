@@ -5,9 +5,9 @@
 #include "CircleCollider.hpp"
 #include "PhysicsWorld.hpp"
 
-using namespace AxiomPhys;
+using namespace IndexPhys;
 
-AXIOM_TEST_CASE(World_GravityAccelDynamic)
+INDEX_TEST_CASE(World_GravityAccelDynamic)
 {
     PhysicsWorld world;
     Body body;
@@ -21,7 +21,7 @@ AXIOM_TEST_CASE(World_GravityAccelDynamic)
     EXPECT_NEAR(body.GetPosition().y, -9.81f, 1e-4);
 }
 
-AXIOM_TEST_CASE(World_StaticBodyDoesNotMove)
+INDEX_TEST_CASE(World_StaticBodyDoesNotMove)
 {
     PhysicsWorld world;
     Body body(BodyType::Static);
@@ -33,7 +33,7 @@ AXIOM_TEST_CASE(World_StaticBodyDoesNotMove)
     EXPECT_NEAR(body.GetPosition().y, 2.0f, 1e-6);
 }
 
-AXIOM_TEST_CASE(World_AttachColliderUpdatesBothSides)
+INDEX_TEST_CASE(World_AttachColliderUpdatesBothSides)
 {
     PhysicsWorld world;
     Body body;
@@ -46,7 +46,7 @@ AXIOM_TEST_CASE(World_AttachColliderUpdatesBothSides)
     EXPECT_TRUE(collider.GetBody() == &body);
 }
 
-AXIOM_TEST_CASE(World_AttachColliderReassignSeversPrevious)
+INDEX_TEST_CASE(World_AttachColliderReassignSeversPrevious)
 {
     PhysicsWorld world;
     Body body1;
@@ -64,7 +64,7 @@ AXIOM_TEST_CASE(World_AttachColliderReassignSeversPrevious)
     EXPECT_TRUE(collider.GetBody() == &body2);
 }
 
-AXIOM_TEST_CASE(World_DynamicBodyRestsOnStaticGround)
+INDEX_TEST_CASE(World_DynamicBodyRestsOnStaticGround)
 {
     // Configure a small world with no gravity and zero-restitution; the dynamic
     // body should be pushed back out of the ground after a single step.
@@ -94,7 +94,7 @@ AXIOM_TEST_CASE(World_DynamicBodyRestsOnStaticGround)
     EXPECT_NEAR(dyn.GetVelocity().y, 0.0f, 1e-4);
 }
 
-AXIOM_TEST_CASE(World_RestitutionBouncesDynamicBody)
+INDEX_TEST_CASE(World_RestitutionBouncesDynamicBody)
 {
     WorldSettings settings;
     settings.gravity = { 0.0f, 0.0f };
@@ -121,7 +121,7 @@ AXIOM_TEST_CASE(World_RestitutionBouncesDynamicBody)
     EXPECT_TRUE(dyn.GetVelocity().y > 0.0f);
 }
 
-AXIOM_TEST_CASE(World_UnregisterBodyClearsContacts)
+INDEX_TEST_CASE(World_UnregisterBodyClearsContacts)
 {
     WorldSettings settings;
     settings.gravity = { 0.0f, 0.0f };
@@ -144,7 +144,7 @@ AXIOM_TEST_CASE(World_UnregisterBodyClearsContacts)
     }
 }
 
-AXIOM_TEST_CASE(World_BoundsClampPosition)
+INDEX_TEST_CASE(World_BoundsClampPosition)
 {
     WorldSettings settings;
     settings.gravity = { 0.0f, 0.0f };

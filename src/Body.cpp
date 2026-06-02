@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-namespace AxiomPhys {
+namespace IndexPhys {
     Body::Body() noexcept
     {
         SetBodyType(BodyType::Dynamic);
@@ -16,22 +16,22 @@ namespace AxiomPhys {
 
     void Body::Destroy() noexcept
     {
-        if (m_collider != nullptr) {
-            m_collider->SetBody(nullptr);
-            m_collider = nullptr;
+        if (m_Collider != nullptr) {
+            m_Collider->SetBody(nullptr);
+            m_Collider = nullptr;
         }
     }
 
     BodyType Body::GetBodyType() const noexcept
     {
-        return m_bodyType;
+        return m_BodyType;
     }
 
     void Body::SetBodyType(BodyType type) noexcept
     {
-        m_bodyType = type;
+        m_BodyType = type;
 
-        switch (m_bodyType) {
+        switch (m_BodyType) {
         case BodyType::Static:
             SetGravityEnabled(false);
             SetBoundaryCheckEnabled(false);
@@ -50,86 +50,86 @@ namespace AxiomPhys {
 
     const Vec2& Body::GetPosition() const noexcept
     {
-        return m_position;
+        return m_Position;
     }
 
     void Body::SetPosition(const Vec2& p) noexcept
     {
-        m_position = p;
+        m_Position = p;
     }
 
     const Vec2& Body::GetVelocity() const noexcept
     {
-        return m_velocity;
+        return m_Velocity;
     }
 
     void Body::SetVelocity(const Vec2& v) noexcept
     {
-        m_velocity = v;
+        m_Velocity = v;
     }
 
     float Body::GetMass() const noexcept
     {
-        return m_mass;
+        return m_Mass;
     }
 
     void Body::SetMass(float mass) noexcept
     {
-        m_mass = mass > 0.0f ? mass : 1.0f;
+        m_Mass = mass > 0.0f ? mass : 1.0f;
     }
 
     float Body::GetRestitution() const noexcept
     {
-        return m_restitution;
+        return m_Restitution;
     }
 
     void Body::SetRestitution(float restitution) noexcept
     {
-        m_restitution = std::clamp(restitution, 0.0f, 1.0f);
+        m_Restitution = std::clamp(restitution, 0.0f, 1.0f);
     }
 
     float Body::GetFriction() const noexcept
     {
-        return m_friction;
+        return m_Friction;
     }
 
     void Body::SetFriction(float friction) noexcept
     {
-        m_friction = std::clamp(friction, 0.0f, 1.0f);
+        m_Friction = std::clamp(friction, 0.0f, 1.0f);
     }
 
     bool Body::IsBoundaryCheckEnabled() const noexcept
     {
-        return m_boundaryCheckEnabled;
+        return m_BoundaryCheckEnabled;
     }
 
     void Body::SetBoundaryCheckEnabled(bool enabled) noexcept
     {
-        m_boundaryCheckEnabled = enabled;
+        m_BoundaryCheckEnabled = enabled;
     }
 
     bool Body::IsGravityEnabled() const noexcept
     {
-        return m_gravityEnabled;
+        return m_GravityEnabled;
     }
 
     void Body::SetGravityEnabled(bool enabled) noexcept
     {
-        m_gravityEnabled = enabled;
+        m_GravityEnabled = enabled;
     }
 
     Collider* Body::GetCollider() noexcept
     {
-        return m_collider;
+        return m_Collider;
     }
 
     const Collider* Body::GetCollider() const noexcept
     {
-        return m_collider;
+        return m_Collider;
     }
 
     void Body::SetCollider(Collider* collider) noexcept
     {
-        m_collider = collider;
+        m_Collider = collider;
     }
 }

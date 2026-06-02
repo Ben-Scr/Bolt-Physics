@@ -4,8 +4,8 @@
 
 #include <vector>
 
-namespace AxiomPhys {
-    class AXIOM_PHYS_API PolygonCollider final : public Collider
+namespace IndexPhys {
+    class INDEX_PHYS_API PolygonCollider final : public Collider
     {
     public:
         PolygonCollider();
@@ -20,6 +20,6 @@ namespace AxiomPhys {
         AABB ComputeAABB() const noexcept override;
 
     private:
-        std::vector<Vec2> m_vertices;
+        std::vector<Vec2> m_Vertices;
     };
 }

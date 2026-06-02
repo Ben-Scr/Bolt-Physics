@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace AxiomPhys {
+namespace IndexPhys {
     namespace {
         template <typename T>
         bool Contains(const std::vector<T*>& items, const T& item)
@@ -92,7 +92,7 @@ namespace AxiomPhys {
     PhysicsWorld::PhysicsWorld() = default;
 
     PhysicsWorld::PhysicsWorld(const WorldSettings& settings)
-        : m_settings(SanitizeSettings(settings))
+        : m_Settings(SanitizeSettings(settings))
     {}
 
     WorldSettings PhysicsWorld::SanitizeSettings(const WorldSettings& settings) noexcept
@@ -115,65 +115,65 @@ namespace AxiomPhys {
 
     void PhysicsWorld::SetSettings(const WorldSettings& settings) noexcept
     {
-        m_settings = SanitizeSettings(settings);
+        m_Settings = SanitizeSettings(settings);
     }
 
     const WorldSettings& PhysicsWorld::GetSettings() const noexcept
     {
-        return m_settings;
+        return m_Settings;
     }
 
     const std::vector<Body*>& PhysicsWorld::GetBodies() const noexcept
     {
-        return m_bodies;
+        return m_Bodies;
     }
 
     const std::vector<Collider*>& PhysicsWorld::GetColliders() const noexcept
     {
-        return m_colliders;
+        return m_Colliders;
     }
 
     bool PhysicsWorld::RegisterBody(Body& body)
     {
-        if (Contains(m_bodies, body)) {
+        if (Contains(m_Bodies, body)) {
             return false;
         }
-        m_bodies.push_back(&body);
+        m_Bodies.push_back(&body);
         return true;
     }
 
     bool PhysicsWorld::UnregisterBody(Body& body)
     {
-        const auto it = std::find(m_bodies.begin(), m_bodies.end(), &body);
-        if (it == m_bodies.end()) {
+        const auto it = std::find(m_Bodies.begin(), m_Bodies.end(), &body);
+        if (it == m_Bodies.end()) {
             return false;
         }
 
         DetachBodyAndCollider(body);
-        m_bodies.erase(it);
+        m_Bodies.erase(it);
 
-        m_contacts.erase(
-            std::remove_if(m_contacts.begin(), m_contacts.end(), [&body](const Contact& contact) {
+        m_Contacts.erase(
+            std::remove_if(m_Contacts.begin(), m_Contacts.end(), [&body](const Contact& contact) {
                 return contact.bodyA == &body || contact.bodyB == &body;
                 }),
-            m_contacts.end());
+            m_Contacts.end());
 
         return true;
     }
 
     bool PhysicsWorld::RegisterCollider(Collider& collider)
     {
-        if (Contains(m_colliders, collider)) {
+        if (Contains(m_Colliders, collider)) {
             return false;
         }
-        m_colliders.push_back(&collider);
+        m_Colliders.push_back(&collider);
         return true;
     }
 
     bool PhysicsWorld::UnregisterCollider(Collider& collider)
     {
-        const auto it = std::find(m_colliders.begin(), m_colliders.end(), &collider);
-        if (it == m_colliders.end()) {
+        const auto it = std::find(m_Colliders.begin(), m_Colliders.end(), &collider);
+        if (it == m_Colliders.end()) {
             return false;
         }
 
@@ -182,20 +182,20 @@ namespace AxiomPhys {
             collider.SetBody(nullptr);
         }
 
-        m_colliders.erase(it);
+        m_Colliders.erase(it);
 
-        m_contacts.erase(
-            std::remove_if(m_contacts.begin(), m_contacts.end(), [&collider](const Contact& contact) {
+        m_Contacts.erase(
+            std::remove_if(m_Contacts.begin(), m_Contacts.end(), [&collider](const Contact& contact) {
                 return contact.colliderA == &collider || contact.colliderB == &collider;
                 }),
-            m_contacts.end());
+            m_Contacts.end());
 
         return true;
     }
 
     bool PhysicsWorld::AttachCollider(Body& body, Collider& collider)
     {
-        if (!Contains(m_bodies, body) || !Contains(m_colliders, collider)) {
+        if (!Contains(m_Bodies, body) || !Contains(m_Colliders, collider)) {
             return false;
         }
 
@@ -230,33 +230,33 @@ namespace AxiomPhys {
 
     std::size_t PhysicsWorld::GetBodyCount() const noexcept
     {
-        return m_bodies.size();
+        return m_Bodies.size();
     }
 
     std::size_t PhysicsWorld::GetColliderCount() const noexcept
     {
-        return m_colliders.size();
+        return m_Colliders.size();
     }
 
     const std::vector<Contact>& PhysicsWorld::GetContacts() const noexcept
     {
-        return m_contacts;
+        return m_Contacts;
     }
 
     void PhysicsWorld::IntegrateBodies(float dt)
     {
-        for (Body* body : m_bodies) {
+        for (Body* body : m_Bodies) {
             if (body == nullptr || body->GetBodyType() == BodyType::Static) {
                 continue;
             }
 
             if (body->GetBodyType() == BodyType::Dynamic && body->IsGravityEnabled()) {
-                body->SetVelocity(body->GetVelocity() + (m_settings.gravity * dt));
+                body->SetVelocity(body->GetVelocity() + (m_Settings.gravity * dt));
             }
 
             body->SetPosition(body->GetPosition() + (body->GetVelocity() * dt));
 
-            if (m_settings.enableWorldBounds && body->IsBoundaryCheckEnabled()) {
+            if (m_Settings.enableWorldBounds && body->IsBoundaryCheckEnabled()) {
                 ApplyWorldBounds(*body);
             }
         }
@@ -264,13 +264,13 @@ namespace AxiomPhys {
 
     void PhysicsWorld::ApplyWorldBounds(Body& body) const noexcept
     {
-        Vec2 position = Clamp(body.GetPosition(), m_settings.worldMin, m_settings.worldMax);
+        Vec2 position = Clamp(body.GetPosition(), m_Settings.worldMin, m_Settings.worldMax);
         Vec2 velocity = body.GetVelocity();
 
-        if (position.x == m_settings.worldMin.x || position.x == m_settings.worldMax.x) {
+        if (position.x == m_Settings.worldMin.x || position.x == m_Settings.worldMax.x) {
             velocity.x = 0.0f;
         }
-        if (position.y == m_settings.worldMin.y || position.y == m_settings.worldMax.y) {
+        if (position.y == m_Settings.worldMin.y || position.y == m_Settings.worldMax.y) {
             velocity.y = 0.0f;
         }
 
@@ -280,14 +280,14 @@ namespace AxiomPhys {
 
     void PhysicsWorld::DetectCollisions()
     {
-        m_contacts.clear();
+        m_Contacts.clear();
 
-        const float cellSize = m_settings.broadphaseCellSize;
+        const float cellSize = m_Settings.broadphaseCellSize;
 
         std::vector<BodyCollisionData> collisionBodies;
-        collisionBodies.reserve(m_bodies.size());
+        collisionBodies.reserve(m_Bodies.size());
 
-        for (Body* body : m_bodies) {
+        for (Body* body : m_Bodies) {
             if (body == nullptr) {
                 continue;
             }
@@ -348,7 +348,7 @@ namespace AxiomPhys {
                     }
 
                     if (auto contact = Physics2D::OverlapsWith(*colliderA, *colliderB)) {
-                        m_contacts.push_back(*contact);
+                        m_Contacts.push_back(*contact);
                     }
                 }
             }
@@ -360,7 +360,7 @@ namespace AxiomPhys {
         // Positional correction: applied once. Each contact's penetration is the
         // amount measured at the start of the frame; running this in a loop with
         // stale data would over-correct.
-        for (const Contact& contact : m_contacts) {
+        for (const Contact& contact : m_Contacts) {
             Body* bodyA = contact.bodyA;
             Body* bodyB = contact.bodyB;
             if (bodyA == nullptr || bodyB == nullptr || contact.penetration <= 0.0f) {
@@ -392,9 +392,9 @@ namespace AxiomPhys {
         // Velocity solver: looped to converge in stacks. Each iteration applies
         // a normal impulse (with restitution) plus a tangential impulse clamped
         // by Coulomb friction.
-        const int iterations = std::max(1, m_settings.solverIterations);
+        const int iterations = std::max(1, m_Settings.solverIterations);
         for (int it = 0; it < iterations; ++it) {
-            for (const Contact& contact : m_contacts) {
+            for (const Contact& contact : m_Contacts) {
                 Body* bodyA = contact.bodyA;
                 Body* bodyB = contact.bodyB;
                 if (bodyA == nullptr || bodyB == nullptr) {

@@ -3,10 +3,10 @@
 #include "ColliderType.hpp"
 #include "AABB.hpp"
 
-namespace AxiomPhys {
+namespace IndexPhys {
     class Body;
 
-    class AXIOM_PHYS_API Collider
+    class INDEX_PHYS_API Collider
     {
     public:
         virtual ~Collider() = default;
@@ -20,13 +20,20 @@ namespace AxiomPhys {
 
         void SetBody(Body* body) noexcept;
 
+        // Opaque, pointer-sized user value so a query hit can be mapped back to the
+        // owning game object. Store a direct entity pointer (fastest - no lookup) or
+        // an integer id via reinterpret_cast. nullptr = unset.
+        void  SetUserData(void* userData) noexcept;
+        void* GetUserData() const noexcept;
+
         virtual AABB ComputeAABB() const noexcept = 0;
 
     protected:
         explicit Collider(ColliderType type) noexcept;
 
     private:
-        ColliderType m_type;
-        Body* m_body = nullptr;
+        ColliderType m_Type;
+        Body* m_Body = nullptr;
+        void* m_UserData = nullptr;
     };
 }

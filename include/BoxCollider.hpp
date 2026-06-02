@@ -2,8 +2,8 @@
 #include "Export.hpp"
 #include "Collider.hpp"
 
-namespace AxiomPhys {
-    class AXIOM_PHYS_API BoxCollider final : public Collider
+namespace IndexPhys {
+    class INDEX_PHYS_API BoxCollider final : public Collider
     {
     public:
         BoxCollider() noexcept;
@@ -15,6 +15,6 @@ namespace AxiomPhys {
         AABB ComputeAABB() const noexcept override;
 
     private:
-        Vec2 m_halfExtents;
+        Vec2 m_HalfExtents;
     };
 }

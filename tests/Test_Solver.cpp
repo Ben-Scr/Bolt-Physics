@@ -4,9 +4,9 @@
 #include "BoxCollider.hpp"
 #include "PhysicsWorld.hpp"
 
-using namespace AxiomPhys;
+using namespace IndexPhys;
 
-AXIOM_TEST_CASE(Solver_FrictionDecaysSlidingVelocity)
+INDEX_TEST_CASE(Solver_FrictionDecaysSlidingVelocity)
 {
     WorldSettings settings;
     settings.gravity = { 0.0f, -9.81f };
@@ -34,7 +34,7 @@ AXIOM_TEST_CASE(Solver_FrictionDecaysSlidingVelocity)
     EXPECT_TRUE(box.GetVelocity().x >= 0.0f);
 }
 
-AXIOM_TEST_CASE(Solver_NoFrictionPreservesSlidingVelocity)
+INDEX_TEST_CASE(Solver_NoFrictionPreservesSlidingVelocity)
 {
     // With both bodies' friction = 0 the tangential velocity should not decay
     // even though the bodies stay in contact under gravity.
@@ -63,7 +63,7 @@ AXIOM_TEST_CASE(Solver_NoFrictionPreservesSlidingVelocity)
     EXPECT_NEAR(box.GetVelocity().x, 5.0f, 1e-3);
 }
 
-AXIOM_TEST_CASE(Solver_StackOfThreeBoxesSettles)
+INDEX_TEST_CASE(Solver_StackOfThreeBoxesSettles)
 {
     // A 3-box dynamic stack on a static ground. With iterative resolution the
     // top body's vertical velocity must eventually settle close to zero.
@@ -96,7 +96,7 @@ AXIOM_TEST_CASE(Solver_StackOfThreeBoxesSettles)
     EXPECT_TRUE(b3.GetPosition().y > 1.5f);
 }
 
-AXIOM_TEST_CASE(Solver_IterationsClampedToOne)
+INDEX_TEST_CASE(Solver_IterationsClampedToOne)
 {
     // Setting solverIterations to 0 must still produce a valid step (treated
     // as 1 internally), and a basic ground-rest scenario should still work.

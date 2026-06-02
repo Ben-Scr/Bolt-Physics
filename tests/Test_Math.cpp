@@ -3,9 +3,9 @@
 #include "AABB.hpp"
 #include "Vec2.hpp"
 
-using namespace AxiomPhys;
+using namespace IndexPhys;
 
-AXIOM_TEST_CASE(Vec2_DotAndLength)
+INDEX_TEST_CASE(Vec2_DotAndLength)
 {
     const Vec2 a{ 3.0f, 4.0f };
     EXPECT_NEAR(LengthSq(a), 25.0f, 1e-6);
@@ -13,7 +13,7 @@ AXIOM_TEST_CASE(Vec2_DotAndLength)
     EXPECT_NEAR(Dot(a, Vec2{ 1.0f, 0.0f }), 3.0f, 1e-6);
 }
 
-AXIOM_TEST_CASE(Vec2_Distance)
+INDEX_TEST_CASE(Vec2_Distance)
 {
     const Vec2 a{ 1.0f, 2.0f };
     const Vec2 b{ 4.0f, 6.0f };
@@ -21,7 +21,7 @@ AXIOM_TEST_CASE(Vec2_Distance)
     EXPECT_NEAR(Distance(a, b), 5.0f, 1e-5);
 }
 
-AXIOM_TEST_CASE(Vec2_NormalizeZeroSafe)
+INDEX_TEST_CASE(Vec2_NormalizeZeroSafe)
 {
     const Vec2 zero{ 0.0f, 0.0f };
     const Vec2 n = Normalize(zero);
@@ -29,7 +29,7 @@ AXIOM_TEST_CASE(Vec2_NormalizeZeroSafe)
     EXPECT_NEAR(n.y, 0.0f, 1e-6);
 }
 
-AXIOM_TEST_CASE(AABB_Intersects)
+INDEX_TEST_CASE(AABB_Intersects)
 {
     const AABB a{ { 0, 0 }, { 1, 1 } };
     const AABB b{ { 0.5f, 0.5f }, { 1.5f, 1.5f } };
@@ -38,7 +38,7 @@ AXIOM_TEST_CASE(AABB_Intersects)
     EXPECT_FALSE(a.Intersects(c));
 }
 
-AXIOM_TEST_CASE(AABB_ContainsPoint)
+INDEX_TEST_CASE(AABB_ContainsPoint)
 {
     const AABB box{ { -1.0f, -1.0f }, { 1.0f, 1.0f } };
     EXPECT_TRUE(box.Contains(Vec2{ 0.0f, 0.0f }));
@@ -46,7 +46,7 @@ AXIOM_TEST_CASE(AABB_ContainsPoint)
     EXPECT_FALSE(box.Contains(Vec2{ 1.5f, 0.0f }));
 }
 
-AXIOM_TEST_CASE(AABB_CenterAndExtents)
+INDEX_TEST_CASE(AABB_CenterAndExtents)
 {
     const AABB box{ { -2.0f, -1.0f }, { 4.0f, 3.0f } };
     const Vec2 center = box.GetCenter();

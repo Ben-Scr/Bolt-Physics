@@ -3,8 +3,11 @@ setlocal
 
 pushd "%~dp0"
 
-if not exist "vendor\bin\premake5.exe" (
-    echo [Setup] ERROR: vendor\bin\premake5.exe was not found.
+REM Pfad zur vendored premake-Binary, relativ zu diesem Skript (scripts\).
+set "PREMAKE=..\vendor\bin\premake5.exe"
+
+if not exist "%PREMAKE%" (
+    echo [Setup] ERROR: %PREMAKE% was not found.
     echo [Setup] Please ensure premake5.exe is committed under vendor\bin\.
     popd
     exit /b 1
@@ -14,7 +17,7 @@ set ACTION=%1
 if "%ACTION%"=="" set ACTION=vs2022
 
 echo [Setup] Generating project files with action: %ACTION%
-"vendor\bin\premake5.exe" %ACTION%
+"%PREMAKE%" --file=..\premake5.lua %ACTION%
 set EXITCODE=%ERRORLEVEL%
 
 if %EXITCODE% neq 0 (
@@ -23,6 +26,6 @@ if %EXITCODE% neq 0 (
     exit /b %EXITCODE%
 )
 
-echo [Setup] Done. Open Axiom-Physics.sln in Visual Studio.
+echo [Setup] Done. Open Index-Physics.sln in Visual Studio.
 popd
 endlocal

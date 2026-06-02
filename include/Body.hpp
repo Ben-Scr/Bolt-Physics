@@ -3,10 +3,10 @@
 #include "BodyType.hpp"
 #include "Vec2.hpp"
 
-namespace AxiomPhys {
+namespace IndexPhys {
     class Collider;
 
-    class AXIOM_PHYS_API Body
+    class INDEX_PHYS_API Body
     {
     public:
         Body() noexcept;
@@ -49,14 +49,14 @@ namespace AxiomPhys {
         void SetCollider(Collider* collider) noexcept;
 
     private:
-        BodyType m_bodyType = BodyType::Dynamic;
-        Vec2 m_position{ 0.0f, 0.0f };
-        Vec2 m_velocity{ 0.0f, 0.0f };
-        float m_mass = 1.0f;
-        float m_restitution = 0.0f;
-        float m_friction = 0.3f;
-        bool m_boundaryCheckEnabled = true;
-        bool m_gravityEnabled = true;
-        Collider* m_collider = nullptr;
+        BodyType m_BodyType = BodyType::Dynamic;
+        Vec2 m_Position{ 0.0f, 0.0f };
+        Vec2 m_Velocity{ 0.0f, 0.0f };
+        float m_Mass = 1.0f;
+        float m_Restitution = 0.0f;
+        float m_Friction = 0.3f;
+        bool m_BoundaryCheckEnabled = true;
+        bool m_GravityEnabled = true;
+        Collider* m_Collider = nullptr;
     };
 }

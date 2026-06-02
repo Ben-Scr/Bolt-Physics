@@ -3,13 +3,27 @@
 #include "Vec2.hpp"
 #include "Contact.hpp"
 
+#include <cstddef>
+#include <limits>
 #include <optional>
+#include <vector>
 
-namespace AxiomPhys {
+namespace IndexPhys {
     class Collider;
     class PhysicsWorld;
 
-    class AXIOM_PHYS_API Physics2D
+    // Result of Physics2D::Raycast. On a miss `hit` is false and the remaining
+    // fields are unset. Map `collider` back to a game object via GetUserData().
+    struct INDEX_PHYS_API RaycastHit
+    {
+        bool            hit      = false;
+        const Collider* collider = nullptr;
+        Vec2            point    { 0.0f, 0.0f };
+        Vec2            normal   { 0.0f, 0.0f };
+        float           distance = 0.0f;
+    };
+
+    class INDEX_PHYS_API Physics2D
     {
     public:
         // Optional global context. When set, the single-argument query overloads
@@ -37,7 +51,39 @@ namespace AxiomPhys {
         // back to AABB for unknown shapes.
         static bool ContainsPoint(Collider& collider, const Vec2& point);
 
+        // ---- Raycast & shape-overlap queries (run against the active context) -----
+
+        // Nearest hit along the ray. `direction` need not be normalized; `distance`
+        // is measured along it. Returns a miss when the direction is degenerate,
+        // `maxDistance` <= 0 or NaN, or no context is set. A ray that starts inside a
+        // shape hits it at distance 0 with normal = -direction.
+        static RaycastHit Raycast(const Vec2& origin, const Vec2& direction,
+                                  float maxDistance = std::numeric_limits<float>::infinity());
+        static bool       RaycastCheck(const Vec2& origin, const Vec2& direction,
+                                       float maxDistance = std::numeric_limits<float>::infinity());
+
+        // Overlap a circle placed at `origin`. *Check returns a bool; *All returns
+        // every overlapping collider. Invalid radius (<= 0 or NaN) -> none.
+        static const Collider*              OverlapCircle(const Vec2& origin, float radius);
+        static bool                         OverlapCircleCheck(const Vec2& origin, float radius);
+        static std::vector<const Collider*> OverlapCircleAll(const Vec2& origin, float radius);
+
+        // Overlap a box placed at `origin`. `size` is the FULL width/height;
+        // `rotationDegrees` rotates it CCW about `origin`. Invalid size -> none.
+        static const Collider*              OverlapBox(const Vec2& origin, const Vec2& size, float rotationDegrees = 0.0f);
+        static bool                         OverlapBoxCheck(const Vec2& origin, const Vec2& size, float rotationDegrees = 0.0f);
+        static std::vector<const Collider*> OverlapBoxAll(const Vec2& origin, const Vec2& size, float rotationDegrees = 0.0f);
+
+        // Overlap a convex polygon whose `points` are RELATIVE to `origin`.
+        // Needs count >= 3 finite points, else -> none.
+        static const Collider*              OverlapPolygon(const Vec2& origin, const Vec2* points, std::size_t count);
+        static bool                         OverlapPolygonCheck(const Vec2& origin, const Vec2* points, std::size_t count);
+        static std::vector<const Collider*> OverlapPolygonAll(const Vec2& origin, const Vec2* points, std::size_t count);
+
+        // Every collider whose shape contains the world-space point.
+        static std::vector<const Collider*> ContainsPointAll(const Vec2& point);
+
     private:
-        static PhysicsWorld* s_context;
+        static PhysicsWorld* s_Context;
     };
 }

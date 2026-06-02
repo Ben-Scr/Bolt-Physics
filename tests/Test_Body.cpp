@@ -3,9 +3,9 @@
 #include "Body.hpp"
 #include "BoxCollider.hpp"
 
-using namespace AxiomPhys;
+using namespace IndexPhys;
 
-AXIOM_TEST_CASE(Body_DefaultsToDynamic)
+INDEX_TEST_CASE(Body_DefaultsToDynamic)
 {
     Body body;
     EXPECT_EQ(body.GetBodyType(), BodyType::Dynamic);
@@ -13,7 +13,7 @@ AXIOM_TEST_CASE(Body_DefaultsToDynamic)
     EXPECT_TRUE(body.IsBoundaryCheckEnabled());
 }
 
-AXIOM_TEST_CASE(Body_StaticZerosVelocity)
+INDEX_TEST_CASE(Body_StaticZerosVelocity)
 {
     Body body;
     body.SetVelocity({ 5.0f, 5.0f });
@@ -24,7 +24,7 @@ AXIOM_TEST_CASE(Body_StaticZerosVelocity)
     EXPECT_FALSE(body.IsBoundaryCheckEnabled());
 }
 
-AXIOM_TEST_CASE(Body_KinematicKeepsVelocityNoGravity)
+INDEX_TEST_CASE(Body_KinematicKeepsVelocityNoGravity)
 {
     Body body;
     body.SetVelocity({ 1.0f, -2.0f });
@@ -35,7 +35,7 @@ AXIOM_TEST_CASE(Body_KinematicKeepsVelocityNoGravity)
     EXPECT_TRUE(body.IsBoundaryCheckEnabled());
 }
 
-AXIOM_TEST_CASE(Body_RestitutionClamped)
+INDEX_TEST_CASE(Body_RestitutionClamped)
 {
     Body body;
     body.SetRestitution(2.0f);
@@ -46,7 +46,7 @@ AXIOM_TEST_CASE(Body_RestitutionClamped)
     EXPECT_NEAR(body.GetRestitution(), 0.5f, 1e-6);
 }
 
-AXIOM_TEST_CASE(Body_FrictionClamped)
+INDEX_TEST_CASE(Body_FrictionClamped)
 {
     Body body;
     EXPECT_NEAR(body.GetFriction(), 0.3f, 1e-6); // default
@@ -56,7 +56,7 @@ AXIOM_TEST_CASE(Body_FrictionClamped)
     EXPECT_NEAR(body.GetFriction(), 0.0f, 1e-6);
 }
 
-AXIOM_TEST_CASE(Body_MassClampsToOneOnInvalid)
+INDEX_TEST_CASE(Body_MassClampsToOneOnInvalid)
 {
     Body body;
     body.SetMass(-3.0f);
@@ -67,7 +67,7 @@ AXIOM_TEST_CASE(Body_MassClampsToOneOnInvalid)
     EXPECT_NEAR(body.GetMass(), 2.5f, 1e-6);
 }
 
-AXIOM_TEST_CASE(Body_DestroyDetachesCollider)
+INDEX_TEST_CASE(Body_DestroyDetachesCollider)
 {
     Body body;
     BoxCollider collider({ 0.5f, 0.5f });

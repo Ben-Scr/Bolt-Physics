@@ -2,8 +2,8 @@
 #include "Export.hpp"
 #include "Vec2.hpp"
 
-namespace AxiomPhys {
-    struct AXIOM_PHYS_API WorldSettings
+namespace IndexPhys {
+    struct INDEX_PHYS_API WorldSettings
     {
         Vec2 gravity{ 0.0f, -9.81f };
         Vec2 worldMin{ -1000.0f, -1000.0f };

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace AxiomPhys {
+namespace IndexPhys {
     enum class BodyType
     {
         Static,

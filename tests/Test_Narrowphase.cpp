@@ -5,7 +5,7 @@
 #include "CircleCollider.hpp"
 #include "Physics2D.hpp"
 
-using namespace AxiomPhys;
+using namespace IndexPhys;
 
 namespace {
     struct ColliderFixture
@@ -18,7 +18,7 @@ namespace {
     };
 }
 
-AXIOM_TEST_CASE(Narrowphase_CircleVsCircleNoOverlap)
+INDEX_TEST_CASE(Narrowphase_CircleVsCircleNoOverlap)
 {
     ColliderFixture a({ 0.0f, 0.0f });
     ColliderFixture b({ 5.0f, 0.0f });
@@ -31,7 +31,7 @@ AXIOM_TEST_CASE(Narrowphase_CircleVsCircleNoOverlap)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Narrowphase_CircleVsCircleOverlap)
+INDEX_TEST_CASE(Narrowphase_CircleVsCircleOverlap)
 {
     ColliderFixture a({ 0.0f, 0.0f });
     ColliderFixture b({ 0.6f, 0.0f });
@@ -47,7 +47,7 @@ AXIOM_TEST_CASE(Narrowphase_CircleVsCircleOverlap)
     EXPECT_NEAR(contact->normal.y, 0.0f, 1e-5);
 }
 
-AXIOM_TEST_CASE(Narrowphase_CircleAABBOverlapButCirclesDontTouch)
+INDEX_TEST_CASE(Narrowphase_CircleAABBOverlapButCirclesDontTouch)
 {
     // Two circles whose AABBs overlap but actual disks do not.
     // Centers at the diagonal corners of an overlapping AABB region.
@@ -66,7 +66,7 @@ AXIOM_TEST_CASE(Narrowphase_CircleAABBOverlapButCirclesDontTouch)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Narrowphase_CircleVsBoxOutside)
+INDEX_TEST_CASE(Narrowphase_CircleVsBoxOutside)
 {
     ColliderFixture circleBody({ 1.2f, 0.0f });
     ColliderFixture boxBody({ 0.0f, 0.0f });
@@ -82,7 +82,7 @@ AXIOM_TEST_CASE(Narrowphase_CircleVsBoxOutside)
     EXPECT_NEAR(contact->normal.y, 0.0f, 1e-5);
 }
 
-AXIOM_TEST_CASE(Narrowphase_CircleVsBoxOutsideTangent)
+INDEX_TEST_CASE(Narrowphase_CircleVsBoxOutsideTangent)
 {
     // Tangent: circle touches box but does not penetrate.
     ColliderFixture circleBody({ 1.5f, 0.0f });
@@ -96,7 +96,7 @@ AXIOM_TEST_CASE(Narrowphase_CircleVsBoxOutsideTangent)
     EXPECT_FALSE(contact.has_value());
 }
 
-AXIOM_TEST_CASE(Narrowphase_BoxVsCircleNormalIsFlipped)
+INDEX_TEST_CASE(Narrowphase_BoxVsCircleNormalIsFlipped)
 {
     ColliderFixture circleBody({ 1.2f, 0.0f });
     ColliderFixture boxBody({ 0.0f, 0.0f });
@@ -113,7 +113,7 @@ AXIOM_TEST_CASE(Narrowphase_BoxVsCircleNormalIsFlipped)
     EXPECT_TRUE(contact->colliderB == &circle);
 }
 
-AXIOM_TEST_CASE(Narrowphase_CircleCenterInsideBox)
+INDEX_TEST_CASE(Narrowphase_CircleCenterInsideBox)
 {
     // Circle center at (0.4, 0) inside box centered at origin halfExtents (0.5, 0.5).
     // Closest edges: right (0.1) and along Y the center is 0.5 away from top/bottom edges.
@@ -134,7 +134,7 @@ AXIOM_TEST_CASE(Narrowphase_CircleCenterInsideBox)
     EXPECT_NEAR(contact->penetration, 0.3f, 1e-5);
 }
 
-AXIOM_TEST_CASE(Narrowphase_BoxVsBoxAABB)
+INDEX_TEST_CASE(Narrowphase_BoxVsBoxAABB)
 {
     ColliderFixture a({ 0.0f, 0.0f });
     ColliderFixture b({ 0.8f, 0.0f });

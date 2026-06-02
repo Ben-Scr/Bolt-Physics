@@ -2,8 +2,8 @@
 #include "Export.hpp"
 #include "Collider.hpp"
 
-namespace AxiomPhys {
-    class AXIOM_PHYS_API CircleCollider final : public Collider
+namespace IndexPhys {
+    class INDEX_PHYS_API CircleCollider final : public Collider
     {
     public:
         explicit CircleCollider(float radius);
@@ -14,6 +14,6 @@ namespace AxiomPhys {
         AABB ComputeAABB() const noexcept override;
 
     private:
-        float m_radius = 0.5f;
+        float m_Radius = 0.5f;
     };
 }

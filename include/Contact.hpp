@@ -1,7 +1,7 @@
 #pragma once
 #include "Vec2.hpp"
 
-namespace AxiomPhys {
+namespace IndexPhys {
     class Body;
     class Collider;
 

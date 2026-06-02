@@ -7,8 +7,8 @@
 
 #include <vector>
 
-namespace AxiomPhys {
-    class AXIOM_PHYS_API PhysicsWorld
+namespace IndexPhys {
+    class INDEX_PHYS_API PhysicsWorld
     {
     public:
         PhysicsWorld();
@@ -44,9 +44,9 @@ namespace AxiomPhys {
         void DetectCollisions();
         void ResolveContacts();
 
-        WorldSettings m_settings;
-        std::vector<Body*> m_bodies;
-        std::vector<Collider*> m_colliders;
-        std::vector<Contact> m_contacts;
+        WorldSettings m_Settings;
+        std::vector<Body*> m_Bodies;
+        std::vector<Collider*> m_Colliders;
+        std::vector<Contact> m_Contacts;
     };
 }
