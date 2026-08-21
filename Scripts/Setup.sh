@@ -3,8 +3,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-# Konstante Pfade, relativ zu diesem Skript (scripts/).
-readonly VENDORED_PREMAKE="../vendor/bin/premake5"
+# Konstante Pfade, relativ zu diesem Skript (Scripts/).
+readonly VENDORED_PREMAKE="../Vendor/Bin/premake5"
 readonly PREMAKE_FILE="../premake5.lua"
 
 # Locate a premake5 binary. Prefer a vendored one if it's executable on this

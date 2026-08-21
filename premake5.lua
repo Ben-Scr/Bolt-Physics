@@ -1,5 +1,5 @@
 -- Index-Physics build script
--- Generate project files with: vendor\bin\premake5.exe vs2022   (or run Setup.bat)
+-- Generate project files with: Vendor\Bin\premake5.exe vs2022   (or run Setup.bat)
 
 workspace "Index-Physics"
     architecture "x86_64"
@@ -33,11 +33,11 @@ project "Index-Physics"
 
     files
     {
-        "include/**.hpp",
-        "include/**.h",
-        "src/**.cpp",
-        "src/**.hpp",
-        "src/**.h"
+        "Include/**.hpp",
+        "Include/**.h",
+        "Src/**.cpp",
+        "Src/**.hpp",
+        "Src/**.h"
     }
 
     includedirs
@@ -69,7 +69,7 @@ project "Index-Physics"
         optimize "full"
 
 project "Tests"
-    location "tests"
+    location "Tests"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++latest"
@@ -82,16 +82,16 @@ project "Tests"
 
     files
     {
-        "tests/**.cpp",
-        "tests/**.hpp",
-        "tests/**.h"
+        "Tests/**.cpp",
+        "Tests/**.hpp",
+        "Tests/**.h"
     }
 
     includedirs
     {
-        "include",
-        "external/include",
-        "tests"
+        "Include",
+        "External/Include",
+        "Tests"
     }
 
     links

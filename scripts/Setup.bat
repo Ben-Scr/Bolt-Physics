@@ -3,8 +3,8 @@ setlocal
 
 pushd "%~dp0"
 
-REM Pfad zur vendored premake-Binary, relativ zu diesem Skript (scripts\).
-set "PREMAKE=..\vendor\bin\premake5.exe"
+REM Pfad zur vendored premake-Binary, relativ zu diesem Skript (Scripts\).
+set "PREMAKE=..\Vendor\Bin\premake5.exe"
 
 if not exist "%PREMAKE%" (
     echo [Setup] ERROR: %PREMAKE% was not found.
