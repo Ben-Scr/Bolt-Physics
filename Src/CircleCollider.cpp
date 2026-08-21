@@ -1,7 +1,7 @@
 #include "CircleCollider.hpp"
 #include "Body.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     namespace {
         constexpr float kDefaultRadius = 0.5f;
     }

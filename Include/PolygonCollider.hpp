@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace IndexPhys {
+namespace Index::Physics {
     class INDEX_PHYS_API PolygonCollider final : public Collider
     {
     public:

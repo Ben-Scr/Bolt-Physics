@@ -6,7 +6,7 @@
 #include <limits>
 #include <utility>
 
-namespace IndexPhys {
+namespace Index::Physics {
     namespace {
         constexpr std::size_t kMinPolygonVertices = 3;
     }

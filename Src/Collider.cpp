@@ -1,7 +1,7 @@
 #include "Collider.hpp"
 #include "Body.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     Collider::Collider(ColliderType type) noexcept
         : m_Type(type)
     {}

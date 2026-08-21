@@ -3,7 +3,7 @@
 #include "ColliderType.hpp"
 #include "AABB.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     class Body;
 
     class INDEX_PHYS_API Collider

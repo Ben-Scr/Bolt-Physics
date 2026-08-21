@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace IndexPhys {
+namespace Index::Physics {
     namespace {
         template <typename T>
         bool Contains(const std::vector<T*>& items, const T& item)

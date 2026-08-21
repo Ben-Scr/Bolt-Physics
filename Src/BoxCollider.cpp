@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace IndexPhys {
+namespace Index::Physics {
     namespace {
         Vec2 SanitizeHalfExtents(const Vec2& halfExtents) noexcept
         {

@@ -8,7 +8,7 @@
 #include <optional>
 #include <vector>
 
-namespace IndexPhys {
+namespace Index::Physics {
     class Collider;
     class PhysicsWorld;
 

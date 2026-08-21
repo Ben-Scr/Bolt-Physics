@@ -2,7 +2,7 @@
 #include "Export.hpp"
 #include "Vec2.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     struct INDEX_PHYS_API WorldSettings
     {
         Vec2 gravity{ 0.0f, -9.81f };

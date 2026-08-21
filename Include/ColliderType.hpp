@@ -1,6 +1,6 @@
 #pragma once
 
-namespace IndexPhys {
+namespace Index::Physics {
     enum class ColliderType
     {
         Box,

@@ -13,7 +13,7 @@
 #include <limits>
 #include <vector>
 
-namespace IndexPhys {
+namespace Index::Physics {
     PhysicsWorld* Physics2D::s_Context = nullptr;
 
     namespace {

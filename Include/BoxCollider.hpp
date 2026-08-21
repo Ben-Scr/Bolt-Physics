@@ -2,7 +2,7 @@
 #include "Export.hpp"
 #include "Collider.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     class INDEX_PHYS_API BoxCollider final : public Collider
     {
     public:

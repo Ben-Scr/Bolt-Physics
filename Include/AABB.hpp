@@ -1,7 +1,7 @@
 #pragma once
 #include "Vec2.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     struct AABB
     {
         Vec2 min{ 0.0f, 0.0f };

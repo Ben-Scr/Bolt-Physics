@@ -3,7 +3,7 @@
 #include "BodyType.hpp"
 #include "Vec2.hpp"
 
-namespace IndexPhys {
+namespace Index::Physics {
     class Collider;
 
     class INDEX_PHYS_API Body

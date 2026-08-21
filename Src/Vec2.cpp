@@ -3,7 +3,7 @@
 #include <cmath>
 #include <limits>
 
-namespace IndexPhys {
+namespace Index::Physics {
     float Length(const Vec2& v) noexcept
     {
         return std::sqrt(LengthSq(v));

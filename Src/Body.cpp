@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-namespace IndexPhys {
+namespace Index::Physics {
     Body::Body() noexcept
     {
         SetBodyType(BodyType::Dynamic);
